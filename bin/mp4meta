@@ -1,0 +1,3 @@
+#!/usr/bin/perl
+use App::MP4Meta;
+App::MP4Meta->run;
