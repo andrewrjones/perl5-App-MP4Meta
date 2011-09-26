@@ -1,7 +1,11 @@
+use 5.010;
 use strict;
 use warnings;
 
 package App::MP4Meta::Command::film;
+
+# ABSTRACT: Implement the film command
+
 use App::MP4Meta -command;
 
 sub usage_desc { "film %o [file ...]" }
@@ -35,11 +39,13 @@ sub validate_args {
 sub execute {
     my ( $self, $opt, $args ) = @_;
 
-    # load another package to do work?
-    # require App::MP4Meta::Film;
+    require App::MP4Meta::Film;
+    my $film = App::MP4Meta::Film->new;
 
-    # for each file, parse?
-    print "Foo";
+    for my $file (@$args) {
+        my $error = $film->apply_meta($file);
+        say $error if $error;
+    }
 }
 
 1;
