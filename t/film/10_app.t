@@ -1,11 +1,18 @@
-use Test::More tests => 3;
+use Test::More tests => 6;
 use App::Cmd::Tester;
 
 use App::MP4Meta;
 
-my $result = test_app( App::MP4Meta => [qw(film)] );
-is( $result->stdout, 'Foo' );
+my $result;
 
+# test no arguments
+$result = test_app( App::MP4Meta => [qw(film)] );
+is( $result->stdout, '' );
 is( $result->stderr, '', 'nothing sent to sderr' );
+like( $result->error, qr/Error: too few arguments/ );
 
-is( $result->error, undef, 'threw no exceptions' );
+# test file does not exist
+$result = test_app( App::MP4Meta => [qw(film /does/not/exist.mp4)] );
+is( $result->stdout, '' );
+is( $result->stderr, '', 'nothing sent to sderr' );
+like( $result->error, qr!Error: /does/not/exist.mp4 does not exist! );
