@@ -16,6 +16,9 @@ sub new {
     # the path to AtomicParsley
     $self->{'ap'} = AtomicParsley::Command->new( { ap => $args->{'ap'} } );
 
+    # if true, replace file
+    $self->{'noreplace'} = $args->{'noreplace'};
+
     # stores tmp files which we clean up later
     $self->{'tmp_files'} = ();
 

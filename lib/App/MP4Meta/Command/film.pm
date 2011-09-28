@@ -12,9 +12,7 @@ sub usage_desc { "film %o [file ...]" }
 
 sub opt_spec {
     return (
-        [ "blortex|X", "use the blortex algorithm" ],
-        [ "recheck|r", "recheck all results" ],
-    );
+        [ "noreplace", "don't replace the file - creates temp file instead" ], );
 }
 
 sub validate_args {
@@ -40,7 +38,7 @@ sub execute {
     my ( $self, $opt, $args ) = @_;
 
     require App::MP4Meta::Film;
-    my $film = App::MP4Meta::Film->new;
+    my $film = App::MP4Meta::Film->new( { noreplace => $opt->{noreplace}, } );
 
     for my $file (@$args) {
         my $error = $film->apply_meta($file);
