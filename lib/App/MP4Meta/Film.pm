@@ -51,11 +51,7 @@ sub apply_meta {
         artwork     => $cover_file
     );
 
-    my $tempfile = $self->{ap}->write_tags( $path, $tags );
-
-    unless ( $self->{noreplace} ) {
-        move( $tempfile, $path );
-    }
+    my $tempfile = $self->{ap}->write_tags( $path, $tags, $self->{noreplace} );
 }
 
 sub _parse_filename {
