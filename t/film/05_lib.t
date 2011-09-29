@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 17;
+use Test::More tests => 30;
 
 BEGIN { use_ok('App::MP4Meta::Film'); }
 require_ok('App::MP4Meta::Film');
@@ -13,11 +13,29 @@ my $f = new_ok('App::MP4Meta::Film');
 isa_ok( $f->{ap}, 'AtomicParsley::Command' );
 
 # parse_filename
-is( $f->_parse_filename('THE_TRUMAN_SHOW.m4v'), 'THE TRUMAN SHOW' );
-is( $f->_parse_filename('THE-TRUMAN-SHOW.m4v'), 'THE TRUMAN SHOW' );
-is( $f->_parse_filename('THE-TRUMAN_SHOW.m4v'), 'THE TRUMAN SHOW' );
-is( $f->_parse_filename('THE TRUMAN SHOW.m4v'), 'THE TRUMAN SHOW' );
-is( $f->_parse_filename('THE TRUMAN_SHOW.m4v'), 'THE TRUMAN SHOW' );
+my $title;
+my $year;
+( $title, $year ) = $f->_parse_filename('THE_TRUMAN_SHOW.m4v');
+is( $title, 'THE TRUMAN SHOW' );
+ok( !$year );
+( $title, $year ) = $f->_parse_filename('THE-TRUMAN-SHOW.m4v');
+is( $title, 'THE TRUMAN SHOW' );
+ok( !$year );
+( $title, $year ) = $f->_parse_filename('THE-TRUMAN_SHOW.m4v');
+is( $title, 'THE TRUMAN SHOW' );
+ok( !$year );
+( $title, $year ) = $f->_parse_filename('THE TRUMAN SHOW.m4v');
+is( $title, 'THE TRUMAN SHOW' );
+ok( !$year );
+( $title, $year ) = $f->_parse_filename('THE TRUMAN_SHOW.m4v');
+is( $title, 'THE TRUMAN SHOW' );
+ok( !$year );
+( $title, $year ) = $f->_parse_filename('IF....m4v');
+is( $title, 'IF...' );
+ok( !$year );
+( $title, $year ) = $f->_parse_filename('THE_ITALIAN_JOB_2003.m4v');
+is( $title, 'THE ITALIAN JOB' );
+is( $year,  2003 );
 
 # get_cover_image
 ok( !$f->_get_cover_image('cover.gif') );
@@ -36,6 +54,16 @@ my @genres = @{ $imdb->genres };
 my $genre  = $genres[0];
 is( $genre,      'Comedy' );
 is( $imdb->year, 1998 );
+
+# year
+$imdb = $f->_query_imdb('The Italian Job');
+ok($imdb);
+is( $imdb->year, 2003 );
+$imdb = $f->_query_imdb( 'The Italian Job', 1969 );
+ok($imdb);
+is( $imdb->year, 1969 );
+
+# no match
 $imdb = $f->_query_imdb('sejkfnjeksnfjkasdkfuhekfjeafasf');
 ok( !$imdb );
 

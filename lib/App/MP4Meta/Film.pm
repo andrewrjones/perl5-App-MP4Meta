@@ -25,11 +25,11 @@ sub apply_meta {
     # get the file name
     my ( $volume, $directories, $file ) = File::Spec->splitpath($path);
 
-    # parse the filename for the film title
-    my $title = $self->_parse_filename($file);
+    # parse the filename for the film title and optional year
+    my ( $title, $year ) = $self->_parse_filename($file);
 
     # get data from IMDB
-    my $imdb = $self->_query_imdb($title);
+    my $imdb = $self->_query_imdb( $title, $year );
     unless ($imdb) {
         return "Error: could not find '$title' on the IMDB (for $path)";
     }
@@ -57,15 +57,26 @@ sub apply_meta {
 sub _parse_filename {
     my ( $self, $file ) = @_;
 
+    # strip suffix
     $file =~ s/\.m4v$//;
+
+    # is there a year?
+    my $year;
+    if ( $file =~ s/(\d\d\d\d)$// ) {
+        $year = $1;
+        chop $file;
+    }
+
+    # make space
     $file =~ s/(-|_)/ /g;
-    return $file;
+
+    return ( $file, $year );
 }
 
 sub _query_imdb {
-    my ( $self, $title ) = @_;
+    my ( $self, $title, $year ) = @_;
 
-    my $imdb = IMDB::Film->new( crit => $title );
+    my $imdb = IMDB::Film->new( crit => $title, year => $year );
 
     if ( $imdb->status ) {
         return $imdb;
