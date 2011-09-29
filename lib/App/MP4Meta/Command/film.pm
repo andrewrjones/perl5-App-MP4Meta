@@ -12,7 +12,8 @@ sub usage_desc { "film %o [file ...]" }
 
 sub opt_spec {
     return (
-        [ "noreplace", "don't replace the file - creates temp file instead" ], );
+        [ "noreplace", "don't replace the file - creates temp file instead" ],
+    );
 }
 
 sub validate_args {
