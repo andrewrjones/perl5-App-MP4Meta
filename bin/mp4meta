@@ -3,4 +3,16 @@ use warnings;
 use strict;
 
 use App::MP4Meta;
+
+$main::VERSION = $App::MP4Meta::VERSION;
+
+# PODNAME:  mp4meta
+# ABSTRACT: Apply iTunes-like meta data to an mp4 file.
+
 App::MP4Meta->run;
+
+=head1 OVERVIEW
+
+For help with App::MP4Meta, run "mp4meta commands".
+
+=cut
