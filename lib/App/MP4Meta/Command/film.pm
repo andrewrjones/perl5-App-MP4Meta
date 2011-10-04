@@ -4,7 +4,7 @@ use warnings;
 
 package App::MP4Meta::Command::film;
 
-# ABSTRACT: Implement the film command
+# ABSTRACT: Apply metadata to a film. Parses the filename in order to get the films title and (optionally) year.
 
 use App::MP4Meta -command;
 
