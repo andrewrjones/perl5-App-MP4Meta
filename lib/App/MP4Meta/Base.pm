@@ -44,7 +44,7 @@ sub DESTROY {
   
 =method new( %args )
 
-Create new object. Takes the following arguments
+Create new object. Takes the following arguments:
 
 =for :list
 * ap - Path to the AtomicParsley command. Optional.
