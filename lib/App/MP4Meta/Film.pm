@@ -54,6 +54,7 @@ sub apply_meta {
     my $tempfile = $self->{ap}->write_tags( $path, $tags, $self->{noreplace} );
 }
 
+# Parse the filename in order to get the film title. Returns the title.
 sub _parse_filename {
     my ( $self, $file ) = @_;
 
@@ -73,6 +74,9 @@ sub _parse_filename {
     return ( $file, $year );
 }
 
+# Make a query to imdb and get the film data.
+# Returns undef if we couldn't find the film.
+# Returns an IMDB::Film object.
 sub _query_imdb {
     my ( $self, $title, $year ) = @_;
 
@@ -84,6 +88,7 @@ sub _query_imdb {
     return;
 }
 
+# Gets the cover image and stores in a tmp file
 sub _get_cover_image {
     my ( $self, $cover_url ) = @_;
 
@@ -118,21 +123,5 @@ sub _get_cover_image {
 Apply metadata to the file at this path.
 
 Returns undef if success; string if error.
-
-=method parse_filename( $file )
-
-Parse the filename in order to get the film title. Returns the title.
-
-=method query_imdb( $title )
-
-Make a query to imdb and get the film data.
-
-Returns undef if we couldn't find the film.
-
-Returns an IMDB::Film object.
-
-=method get_cover_image( $cover_url )
-
-Gets the cover image and stores in a tmp file
 
 =cut

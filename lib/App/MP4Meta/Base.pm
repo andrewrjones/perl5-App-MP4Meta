@@ -42,26 +42,10 @@ sub DESTROY {
   my $film = App::MP4Meta::Base->new( ap => 'path/to/ap' );
   $film->apply_meta( '/path/to/The_Truman_Show.m4v' );
   
-=method new( $path )
+=method new( %args )
 
-Apply metadata to the file at this path.
+Create new object. Takes the following arguments
 
-Returns undef if success; string if error.
-
-=method parse_filename( $file )
-
-Parse the filename in order to get the film title. Returns the title.
-
-=method query_imdb( $title )
-
-Make a query to imdb and get the film data.
-
-Returns undef if we couldn't find the film.
-
-Returns an IMDB::Film object.
-
-=method get_cover_image( $cover_url )
-
-Gets the cover image and stores in a tmp file
-
-=cut
+=for :list
+* ap - Path to the AtomicParsley command. Optional.
+* noreplace - If true, do not replace file, but save to temp instead
