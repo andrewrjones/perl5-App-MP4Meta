@@ -1,7 +1,7 @@
 AtomicParsley::Command
 ======================
 
-This is a perlscript to apply iTunes-like meta data to an mp4 file.
+This is a perl5 script to apply iTunes-like meta data to an mp4 file.
 
 INSTALL
 -------
