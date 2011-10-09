@@ -18,7 +18,7 @@ This command applies metadata to one or more films. It parses the filename in or
 
 It gets the films metadata by querying the IMDB. It then uses AtomicParsley to apply the metadata to the file.
 
-By default, it will apply the metadata to the existing file. If you want it to write to a temporary file and leave the existing file untouched, provide the "--noreplace" option.
+By default, it will apply the metadata to the existing file. If you want it to write to a temporary file and leave the existing file untouched, provide the C<--noreplace> option.
 
 =cut
 
