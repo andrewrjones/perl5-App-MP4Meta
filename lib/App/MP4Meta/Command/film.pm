@@ -10,6 +10,10 @@ use App::MP4Meta -command;
 
 sub usage_desc { "film %o [file ...]" }
 
+sub abstract {
+'Apply metadata to a film. Parses the filename in order to get the films title and (optionally) year.';
+}
+
 sub opt_spec {
     return (
         [ "noreplace", "Don't replace the file - creates a temp file instead" ],
