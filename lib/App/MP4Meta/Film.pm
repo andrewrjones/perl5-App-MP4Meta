@@ -51,7 +51,12 @@ sub apply_meta {
         artwork     => $cover_file
     );
 
-    my $tempfile = $self->{ap}->write_tags( $path, $tags, $self->{noreplace} );
+    my $tempfile = $self->{ap}->write_tags( $path, $tags, !$self->{noreplace} );
+
+    if ( !$tempfile ) {
+        return "Error writing to file";
+    }
+    return;
 }
 
 # Parse the filename in order to get the film title. Returns the title.
