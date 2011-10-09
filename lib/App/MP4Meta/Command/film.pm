@@ -8,6 +8,20 @@ package App::MP4Meta::Command::film;
 
 use App::MP4Meta -command;
 
+=head1 SYNOPSIS
+
+  mp4meta film PULP_FICTION.mp4 "The Truman Show.m4v"
+  
+  mp4meta film --noreplace THE-ITALIAN-JOB-2003.m4v
+
+This command applies metadata to one or more films. It parses the filename in order to get the films title and (optionally) year.
+
+It gets the films metadata by querying the IMDB. It then uses AtomicParsley to apply the metadata to the file.
+
+By default, it will apply the metadata to the existing file. If you want it to write to a temporary file and leave the existing file untouched, provide the "--noreplace" option.
+
+=cut
+
 sub usage_desc { "film %o [file ...]" }
 
 sub abstract {
