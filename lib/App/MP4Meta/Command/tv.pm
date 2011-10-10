@@ -57,10 +57,10 @@ sub execute {
     my ( $self, $opt, $args ) = @_;
 
     require App::MP4Meta::TV;
-    my $film = App::MP4Meta::TV->new( { noreplace => $opt->{noreplace}, } );
+    my $tv = App::MP4Meta::TV->new( { noreplace => $opt->{noreplace}, } );
 
     for my $file (@$args) {
-        my $error = $film->apply_meta($file);
+        my $error = $tv->apply_meta($file);
         say $error if $error;
     }
 }
