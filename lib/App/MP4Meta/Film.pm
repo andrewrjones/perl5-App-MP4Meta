@@ -53,6 +53,10 @@ sub apply_meta {
 
     my $tempfile = $self->{ap}->write_tags( $path, $tags, !$self->{noreplace} );
 
+    if ( !$self->{ap}->{success} ) {
+        return $self->{ap}->{'stdout_buf'}[0];
+    }
+
     if ( !$tempfile ) {
         return "Error writing to file";
     }
