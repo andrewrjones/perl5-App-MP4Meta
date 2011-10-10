@@ -19,7 +19,7 @@ use AtomicParsley::Command::Tags;
 
 # a list of regexes to try to parse the file
 my @file_regexes = (
-    qr/^S(?<season>\d)-E(?<episode>\d)\s+-\s+(?<title>.*)$/,
+    qr/^S(?<season>\d)-E(?<episode>\d)\s+-\s+(?<show>.*)$/,
     qr/^(?<show>.*)\s+S(?<season>\d\d)E(?<episode>\d\d)$/,
     qr/^(?<show>.*)\.S(?<season>\d\d)E(?<episode>\d\d)/,
     qr/^(?<show>.*) - S(?<season>\d\d?)E(?<episode>\d\d?)/,
