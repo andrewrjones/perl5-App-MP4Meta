@@ -13,7 +13,6 @@ use IMDB::Film '0.50';
 
 use LWP::Simple '5.835';
 use File::Spec '3.33';
-use File::Temp '0.22', ();
 use File::Copy;
 
 use AtomicParsley::Command;
@@ -99,10 +98,8 @@ sub _get_cover_image {
     my ( $self, $cover_url ) = @_;
 
     if ( $cover_url =~ m/\.(jpg|png)$/ ) {
-        my $tmp = File::Temp->new( UNLINK => 0, SUFFIX => ".$1" );
 
-        # save the tmp file for later
-        push @{ $self->{tmp_files} }, $tmp->filename;
+        my $tmp = $self->_get_tempfile($1);
 
         # get the cover image
         getstore( $cover_url, $tmp->filename );

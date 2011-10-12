@@ -6,6 +6,8 @@ package App::MP4Meta::Base;
 
 # ABSTRACT: Base class.
 
+use File::Temp '0.22', ();
+
 use AtomicParsley::Command;
 
 sub new {
@@ -35,6 +37,19 @@ sub _clean_title {
     $title = join ' ', map( { ucfirst() } split /\s/, $title );
 
     return $title;
+}
+
+sub _get_tempfile {
+    my ( $self, $suffix ) = @_;
+
+    $suffix = $suffix // 'tmp';
+
+    my $tmp = File::Temp->new( UNLINK => 0, SUFFIX => ".$suffix" );
+
+    # save the tmp file for later
+    push @{ $self->{tmp_files} }, $tmp->filename;
+
+    return $tmp;
 }
 
 sub DESTROY {

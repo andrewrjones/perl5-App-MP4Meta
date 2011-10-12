@@ -10,7 +10,6 @@ use App::MP4Meta::Base;
 our @ISA = 'App::MP4Meta::Base';
 
 use File::Spec '3.33';
-use File::Temp '0.22', ();
 use File::Copy;
 use IMDB::Film;
 require LWP::UserAgent;
@@ -243,8 +242,7 @@ sub _get_wikipedia_page {
     }
 
     # create a temp file
-    my $tmp = File::Temp->new( UNLINK => 0, SUFFIX => '.html' );
-    push @{ $self->{tmp_files} }, $tmp->filename;    # so it gets removed later
+    my $tmp = $self->_get_tempfile('html');
 
     # write html to temp file
     print $tmp $response->decoded_content;
@@ -273,8 +271,7 @@ sub _get_cover_image {
         }
 
         # create a temp file
-        my $tmp = File::Temp->new( UNLINK => 0, SUFFIX => ".$suffix" );
-        push @{ $self->{tmp_files} }, $tmp->filename; # so it gets removed later
+        my $tmp = $self->_get_tempfile($suffix);
 
         # write img to temp file
         binmode $tmp;
