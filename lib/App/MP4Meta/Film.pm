@@ -77,10 +77,7 @@ sub _parse_filename {
         chop $file;
     }
 
-    # make space
-    $file =~ s/(-|_)/ /g;
-
-    return ( $file, $year );
+    return ( $self->_clean_title($file), $year );
 }
 
 # Make a query to imdb and get the film data.

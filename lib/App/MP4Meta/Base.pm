@@ -26,6 +26,17 @@ sub new {
     return $self;
 }
 
+# Converts 'THE_OFFICE' to 'The Office'
+sub _clean_title {
+    my ( $self, $title ) = @_;
+
+    $title =~ s/(-|_)/ /g;
+    $title = lc($title);
+    $title = join ' ', map( { ucfirst() } split /\s/, $title );
+
+    return $title;
+}
+
 sub DESTROY {
     my $self = shift;
 
