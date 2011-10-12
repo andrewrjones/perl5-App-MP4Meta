@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 32;
+use Test::More tests => 33;
 
 BEGIN { use_ok('App::MP4Meta::TV'); }
 require_ok('App::MP4Meta::TV');
@@ -68,6 +68,10 @@ is( $episode_desc,
 );
 is( $episode_year, 2005 );
 ok($cover_img);
+
+my $imdb   = $t->_query_imdb('Extras');
+my @genres = @{ $imdb->genres };
+is( $genres[0], 'Comedy' );
 
 undef $t;
 ok( !-e $tmpfile );

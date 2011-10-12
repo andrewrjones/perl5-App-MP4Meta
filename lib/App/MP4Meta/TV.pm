@@ -12,6 +12,7 @@ our @ISA = 'App::MP4Meta::Base';
 use File::Spec '3.33';
 use File::Temp '0.22', ();
 use File::Copy;
+use IMDB::Film;
 require LWP::UserAgent;
 use HTML::TreeBuilder::XPath;
 
@@ -81,6 +82,13 @@ sub apply_meta {
         return "Error: could not find details on wikipedia (for $path)";
     }
 
+    my $genre = $self->{'genre'};
+    unless ($genre) {
+        my $imdb   = $self->_query_imdb($show_title);
+        my @genres = @{ $imdb->genres };
+        $genre = $genres[0];
+    }
+
     my $tags = AtomicParsley::Command::Tags->new(
         artist       => $show_title,
         albumArtist  => $show_title,
@@ -93,7 +101,7 @@ sub apply_meta {
         TVSeasonNum  => $season,
         stik         => $self->{'media_type'},
         description  => $episode_desc,
-        genre        => $self->{'genre'},
+        genre        => $genre,
         year         => $year,
         artwork      => $cover_file
     );
@@ -131,6 +139,18 @@ sub _parse_filename {
         }
     }
 
+    return;
+}
+
+# Get the genre from the IMDB
+sub _query_imdb {
+    my ( $self, $title ) = @_;
+
+    my $imdb = IMDB::Film->new( crit => $title );
+
+    if ( $imdb->status ) {
+        return $imdb;
+    }
     return;
 }
 
