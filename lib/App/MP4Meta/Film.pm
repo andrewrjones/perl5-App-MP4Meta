@@ -9,10 +9,7 @@ package App::MP4Meta::Film;
 use App::MP4Meta::Base;
 our @ISA = 'App::MP4Meta::Base';
 
-use IMDB::Film '0.50';
-
 use File::Spec '3.33';
-use File::Copy;
 
 use AtomicParsley::Command;
 use AtomicParsley::Command::Tags;

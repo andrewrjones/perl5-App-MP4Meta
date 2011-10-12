@@ -10,9 +10,6 @@ use App::MP4Meta::Base;
 our @ISA = 'App::MP4Meta::Base';
 
 use File::Spec '3.33';
-use File::Copy;
-use IMDB::Film;
-require LWP::UserAgent;
 use HTML::TreeBuilder::XPath;
 
 use AtomicParsley::Command;

@@ -7,6 +7,8 @@ package App::MP4Meta::Base;
 # ABSTRACT: Base class.
 
 use File::Temp '0.22', ();
+use File::Copy;
+use IMDB::Film '0.50';
 require LWP::UserAgent;
 
 use AtomicParsley::Command;
