@@ -59,6 +59,9 @@ sub new {
     # cache for cover images
     $self->{'cover_img_cache'} = {};
 
+    # cache for IMDB objects
+    $self->{'imdb_cache'} = {};
+
     return $self;
 }
 
@@ -86,6 +89,12 @@ sub apply_meta {
         my $imdb   = $self->_query_imdb($show_title);
         my @genres = @{ $imdb->genres };
         $genre = $genres[0];
+    }
+
+    unless ($cover_file) {
+        my $imdb = $self->_query_imdb($show_title);
+        $cover_file = $self->_get_cover_image( $imdb->cover );
+        say $imdb->cover;
     }
 
     my $tags = AtomicParsley::Command::Tags->new(
@@ -146,9 +155,18 @@ sub _parse_filename {
 sub _query_imdb {
     my ( $self, $title ) = @_;
 
+    # first, check the cache
+    if ( defined $self->{'imdb_cache'}->{$title} ) {
+        return $self->{'imdb_cache'}->{$title};
+    }
+
     my $imdb = IMDB::Film->new( crit => $title );
 
     if ( $imdb->status ) {
+
+        # cache IMDB object for future queries
+        $self->{'imdb_cache'}->{$title} = $imdb;
+
         return $imdb;
     }
     return;
@@ -255,6 +273,8 @@ sub _get_wikipedia_page {
 
 sub _get_cover_image {
     my ( $self, $url ) = @_;
+
+    return unless $url;
 
     if ( $url =~ m/\.(jpg|png)$/ ) {
         my $suffix = $1;
