@@ -30,7 +30,7 @@ sub abstract {
 
 sub opt_spec {
     return (
-        [ "genre",     "The genre of the TV Show" ],
+        [ "genre=s",   "The genre of the TV Show" ],
         [ "noreplace", "Don't replace the file - creates a temp file instead" ],
     );
 }
