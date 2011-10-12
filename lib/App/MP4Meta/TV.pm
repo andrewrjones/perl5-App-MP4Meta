@@ -51,14 +51,8 @@ sub new {
 
     $self->{'media_type'} = 'TV Show';
 
-    # LWP::UserAgent
-    $self->{'ua'} = LWP::UserAgent->new;
-
     # cache for wikipedia pages
     $self->{'wikipedia_cache'} = {};
-
-    # cache for cover images
-    $self->{'cover_img_cache'} = {};
 
     return $self;
 }
@@ -237,44 +231,6 @@ sub _get_wikipedia_page {
     $self->{'wikipedia_cache'}->{$url} = $tmp->filename;
 
     return $tmp->filename;
-}
-
-sub _get_cover_image {
-    my ( $self, $url ) = @_;
-
-    return unless $url;
-
-    if ( $url =~ m/\.(jpg|png)$/ ) {
-        my $suffix = $1;
-
-        # first, check the cache
-        if ( defined $self->{'cover_img_cache'}->{$url} ) {
-            return $self->{'cover_img_cache'}->{$url};
-        }
-
-        # get the image
-        my $response = $self->{ua}->get($url);
-        if ( !$response->is_success ) {
-            return;
-        }
-
-        # create a temp file
-        my $tmp = $self->_get_tempfile($suffix);
-
-        # write img to temp file
-        binmode $tmp;
-        print $tmp $response->decoded_content;
-
-        # cache temp file for future queries
-        $self->{'cover_img_cache'}->{$url} = $tmp->filename;
-
-        return $tmp->filename;
-    }
-    else {
-
-        # can't use cover
-        return;
-    }
 }
 
 1;

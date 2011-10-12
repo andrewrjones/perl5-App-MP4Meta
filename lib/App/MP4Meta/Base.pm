@@ -7,6 +7,7 @@ package App::MP4Meta::Base;
 # ABSTRACT: Base class.
 
 use File::Temp '0.22', ();
+require LWP::UserAgent;
 
 use AtomicParsley::Command;
 
@@ -18,6 +19,9 @@ sub new {
     # the path to AtomicParsley
     $self->{'ap'} = AtomicParsley::Command->new( { ap => $args->{'ap'} } );
 
+    # LWP::UserAgent
+    $self->{'ua'} = LWP::UserAgent->new;
+
     # if true, replace file
     $self->{'noreplace'} = $args->{'noreplace'};
 
@@ -26,6 +30,9 @@ sub new {
 
     # cache for IMDB objects
     $self->{'imdb_cache'} = {};
+
+    # cache for cover images
+    $self->{'cover_img_cache'} = {};
 
     bless( $self, $class );
     return $self;
@@ -70,6 +77,45 @@ sub _query_imdb {
         return $imdb;
     }
     return;
+}
+
+# Gets the cover image and stores in a tmp file
+sub _get_cover_image {
+    my ( $self, $url ) = @_;
+
+    return unless $url;
+
+    if ( $url =~ m/\.(jpg|png)$/ ) {
+        my $suffix = $1;
+
+        # first, check the cache
+        if ( defined $self->{'cover_img_cache'}->{$url} ) {
+            return $self->{'cover_img_cache'}->{$url};
+        }
+
+        # get the image
+        my $response = $self->{ua}->get($url);
+        if ( !$response->is_success ) {
+            return;
+        }
+
+        # create a temp file
+        my $tmp = $self->_get_tempfile($suffix);
+
+        # write img to temp file
+        binmode $tmp;
+        print $tmp $response->decoded_content;
+
+        # cache temp file for future queries
+        $self->{'cover_img_cache'}->{$url} = $tmp->filename;
+
+        return $tmp->filename;
+    }
+    else {
+
+        # can't use cover
+        return;
+    }
 }
 
 # Converts 'THE_OFFICE' to 'The Office'

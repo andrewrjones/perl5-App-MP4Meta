@@ -11,7 +11,6 @@ our @ISA = 'App::MP4Meta::Base';
 
 use IMDB::Film '0.50';
 
-use LWP::Simple '5.835';
 use File::Spec '3.33';
 use File::Copy;
 
@@ -68,27 +67,6 @@ sub _parse_filename {
     }
 
     return ( $self->_clean_title($file), $year );
-}
-
-# Gets the cover image and stores in a tmp file
-sub _get_cover_image {
-    my ( $self, $cover_url ) = @_;
-
-    if ( $cover_url =~ m/\.(jpg|png)$/ ) {
-
-        my $tmp = $self->_get_tempfile($1);
-
-        # get the cover image
-        getstore( $cover_url, $tmp->filename );
-
-        # return cover file
-        return $tmp->filename;
-    }
-    else {
-
-        # can't use cover
-        return;
-    }
 }
 
 1;
