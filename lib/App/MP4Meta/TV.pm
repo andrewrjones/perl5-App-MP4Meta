@@ -46,7 +46,8 @@ sub new {
 
     my $self = $class->SUPER::new($args);
 
-    $self->{'genre'} = $args->{'genre'};
+    $self->{'genre'}     = $args->{'genre'};
+    $self->{'coverfile'} = $args->{'coverfile'};
 
     $self->{'media_type'} = 'TV Show';
 
@@ -91,10 +92,10 @@ sub apply_meta {
         $genre = $genres[0];
     }
 
+    $cover_file //= $self->{coverfile};
     unless ($cover_file) {
         my $imdb = $self->_query_imdb($show_title);
         $cover_file = $self->_get_cover_image( $imdb->cover );
-        say $imdb->cover;
     }
 
     my $tags = AtomicParsley::Command::Tags->new(

@@ -30,7 +30,8 @@ sub abstract {
 
 sub opt_spec {
     return (
-        [ "genre=s",   "The genre of the TV Show" ],
+        [ "genre=s",     "The genre of the TV Show" ],
+        [ "coverfile=s", "The location of the cover image" ],
         [ "noreplace", "Don't replace the file - creates a temp file instead" ],
     );
 }
@@ -62,6 +63,7 @@ sub execute {
         {
             noreplace => $opt->{noreplace},
             genre     => $opt->{genre},
+            coverfile => $opt->{coverfile},
         }
     );
 
