@@ -70,10 +70,16 @@ sub apply_meta {
 
     # parse the filename for the title, season and episode
     my ( $show_title, $season, $episode ) = $self->_parse_filename($file);
+    unless ( $show_title && $season && $episode ) {
+        return "Error: could not parse the filename for $path";
+    }
 
     # get data from wikipedia
     my ( $episode_title, $episode_desc, $year, $cover_file ) =
       $self->_query_wikipedia( $show_title, $season, $episode );
+    unless ( $episode_title && $episode_desc ) {
+        return "Error: could not find details on wikipedia (for $path)";
+    }
 
     my $tags = AtomicParsley::Command::Tags->new(
         artist       => $show_title,
@@ -95,7 +101,7 @@ sub apply_meta {
     my $tempfile = $self->{ap}->write_tags( $path, $tags, !$self->{noreplace} );
 
     if ( !$self->{ap}->{success} ) {
-        return $self->{ap}->{'stdout_buf'}[0];
+        return $self->{ap}->{'stdout_buf'}[0] // $self->{ap}->{'full_buf'}[0];
     }
 
     if ( !$tempfile ) {
