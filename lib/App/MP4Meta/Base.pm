@@ -28,6 +28,22 @@ sub new {
     return $self;
 }
 
+sub _write_tags {
+    my ( $self, $path, $tags ) = @_;
+
+    my $tempfile = $self->{ap}->write_tags( $path, $tags, !$self->{noreplace} );
+
+    if ( !$self->{ap}->{success} ) {
+        return $self->{ap}->{'stdout_buf'}[0] // $self->{ap}->{'full_buf'}[0];
+    }
+
+    if ( !$tempfile ) {
+        return "Error writing to file";
+    }
+
+    return;
+}
+
 # Converts 'THE_OFFICE' to 'The Office'
 sub _clean_title {
     my ( $self, $title ) = @_;

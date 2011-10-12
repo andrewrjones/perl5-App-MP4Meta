@@ -115,16 +115,7 @@ sub apply_meta {
         artwork      => $cover_file
     );
 
-    my $tempfile = $self->{ap}->write_tags( $path, $tags, !$self->{noreplace} );
-
-    if ( !$self->{ap}->{success} ) {
-        return $self->{ap}->{'stdout_buf'}[0] // $self->{ap}->{'full_buf'}[0];
-    }
-
-    if ( !$tempfile ) {
-        return "Error writing to file";
-    }
-    return;
+    return $self->_write_tags( $path, $tags );
 }
 
 # Parse the filename in order to get the series title the and season and episode number.
