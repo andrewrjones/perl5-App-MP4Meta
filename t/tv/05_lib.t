@@ -25,12 +25,12 @@ is( $title,   'Heroes' );
 is( $season,  3 );
 is( $episode, 1 );
 ( $title, $season, $episode ) = $t->_parse_filename('THE_OFFICE-S1E3.m4v');
-is( $title,   'THE OFFICE' );
+is( $title,   'The Office' );
 is( $season,  1 );
 is( $episode, 3 );
 ( $title, $season, $episode ) =
   $t->_parse_filename('THE_MIGHTY_BOOSH_S1E4.m4v');
-is( $title,   'THE MIGHTY BOOSH' );
+is( $title,   'The Mighty Boosh' );
 is( $season,  1 );
 is( $episode, 4 );
 ( $title, $season, $episode ) = $t->_parse_filename('Dexter - s01e01.m4v');

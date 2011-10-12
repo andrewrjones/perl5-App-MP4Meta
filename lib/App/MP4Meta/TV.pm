@@ -133,13 +133,25 @@ sub _parse_filename {
             my $episode = $+{episode};
 
             if ( $show && $season && $episode ) {
-                $show =~ s/(-|_)/ /g;
-                return ( $show, int $season, int $episode );
+
+                return ( $self->_clean_title($show), int $season,
+                    int $episode );
             }
         }
     }
 
     return;
+}
+
+# Converts 'THE_OFFICE' to 'The Office'
+sub _clean_title {
+    my ( $self, $title ) = @_;
+
+    $title =~ s/(-|_)/ /g;
+    $title = lc($title);
+    $title = join ' ', map( { ucfirst() } split /\s/, $title );
+
+    return $title;
 }
 
 # Get the genre from the IMDB
