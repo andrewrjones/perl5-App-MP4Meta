@@ -4,7 +4,7 @@ use warnings;
 
 package App::MP4Meta::Base;
 
-# ABSTRACT: Base class.
+# ABSTRACT: Base class. Contains common functionality.
 
 use File::Temp '0.22', ();
 use File::Copy;
@@ -40,6 +40,7 @@ sub new {
     return $self;
 }
 
+# Calls AtomicParsley and writes the tags to the file
 sub _write_tags {
     my ( $self, $path, $tags ) = @_;
 

@@ -10,8 +10,6 @@ use App::MP4Meta::Base;
 our @ISA = 'App::MP4Meta::Base';
 
 use File::Spec '3.33';
-
-use AtomicParsley::Command;
 use AtomicParsley::Command::Tags;
 
 sub apply_meta {

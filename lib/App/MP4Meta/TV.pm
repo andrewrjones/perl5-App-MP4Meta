@@ -11,8 +11,6 @@ our @ISA = 'App::MP4Meta::Base';
 
 use File::Spec '3.33';
 use HTML::TreeBuilder::XPath;
-
-use AtomicParsley::Command;
 use AtomicParsley::Command::Tags;
 
 # the wikipedia URL
