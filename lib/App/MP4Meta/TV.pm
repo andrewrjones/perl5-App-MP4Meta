@@ -44,6 +44,8 @@ sub new {
 
     my $self = $class->SUPER::new($args);
 
+    $self->{'genre'} = $args->{'genre'};
+
     $self->{'media_type'} = 'TV Show';
 
     # LWP::UserAgent
@@ -83,8 +85,8 @@ sub apply_meta {
         TVSeasonNum  => $season,
         stik         => $self->{'media_type'},
         description  => $episode_desc,
+        genre        => $self->{'genre'},
 
-        #genre       => $genre,
         #year        => $year,
         artwork => $cover_file
     );
