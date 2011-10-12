@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 13;
+use Test::More tests => 16;
 
 BEGIN { use_ok('App::MP4Meta::TV'); }
 require_ok('App::MP4Meta::TV');
@@ -30,3 +30,7 @@ is( $episode, 3 );
 is( $title,   'THE MIGHTY BOOSH' );
 is( $season,  1 );
 is( $episode, 4 );
+( $title, $season, $episode ) = $t->_parse_filename('Dexter - s01e01.m4v');
+is( $title,   'Dexter' );
+is( $season,  1 );
+is( $episode, 1 );

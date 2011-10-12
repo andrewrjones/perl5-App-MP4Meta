@@ -22,7 +22,7 @@ my @file_regexes = (
     qr/^S(?<season>\d)-E(?<episode>\d)\s+-\s+(?<show>.*)$/,
     qr/^(?<show>.*)\s+S(?<season>\d\d)E(?<episode>\d\d)$/,
     qr/^(?<show>.*)\.S(?<season>\d\d)E(?<episode>\d\d)/,
-    qr/^(?<show>.*) - S(?<season>\d\d?)E(?<episode>\d\d?)/,
+    qr/^(?<show>.*) - S(?<season>\d\d?)E(?<episode>\d\d?)/i,
     qr/^(?<show>.*)-S(?<season>\d\d?)E(?<episode>\d\d?)/,
     qr/^(?<show>.*)_S(?<season>\d\d?)E(?<episode>\d\d?)/,
 );
