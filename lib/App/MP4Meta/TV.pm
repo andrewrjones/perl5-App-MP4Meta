@@ -44,6 +44,8 @@ sub new {
 
     my $self = $class->SUPER::new($args);
 
+    $self->{'media_type'} = 'TV Show';
+
     # LWP::UserAgent
     $self->{'ua'} = LWP::UserAgent->new;
 
@@ -62,8 +64,41 @@ sub apply_meta {
     # get the file name
     my ( $volume, $directories, $file ) = File::Spec->splitpath($path);
 
-    ...
+    # parse the filename for the title, season and episode
+    my ( $show_title, $season, $episode ) = $self->_parse_filename($file);
 
+    # get data from wikipedia
+    my ( $episode_title, $episode_desc, $cover_file ) =
+      $self->_query_wikipedia( $show_title, $season, $episode );
+
+    my $tags = AtomicParsley::Command::Tags->new(
+        artist       => $show_title,
+        albumArtist  => $show_title,
+        title        => $episode_title,
+        album        => "$show_title, Season $season",
+        tracknum     => $episode,
+        TVShowName   => $show_title,
+        TVEpisode    => $episode,
+        TVEpisodeNum => $episode,
+        TVSeasonNum  => $season,
+        stik         => $self->{'media_type'},
+        description  => $episode_desc,
+
+        #genre       => $genre,
+        #year        => $year,
+        artwork => $cover_file
+    );
+
+    my $tempfile = $self->{ap}->write_tags( $path, $tags, !$self->{noreplace} );
+
+    if ( !$self->{ap}->{success} ) {
+        return $self->{ap}->{'stdout_buf'}[0];
+    }
+
+    if ( !$tempfile ) {
+        return "Error writing to file";
+    }
+    return;
 }
 
 # Parse the filename in order to get the series title the and season and episode number.

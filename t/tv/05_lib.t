@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 27;
+use Test::More tests => 28;
 
 BEGIN { use_ok('App::MP4Meta::TV'); }
 require_ok('App::MP4Meta::TV');
@@ -11,6 +11,8 @@ require_ok('App::MP4Meta::TV');
 # new
 my $t = new_ok('App::MP4Meta::TV');
 isa_ok( $t->{ap}, 'AtomicParsley::Command' );
+
+is( $t->{'media_type'}, 'TV Show' );
 
 my $title;
 my $season;
