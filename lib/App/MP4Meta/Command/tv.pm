@@ -30,6 +30,7 @@ sub abstract {
 
 sub opt_spec {
     return (
+        [ "genre",     "The genre of the TV Show" ],
         [ "noreplace", "Don't replace the file - creates a temp file instead" ],
     );
 }
@@ -57,7 +58,12 @@ sub execute {
     my ( $self, $opt, $args ) = @_;
 
     require App::MP4Meta::TV;
-    my $tv = App::MP4Meta::TV->new( { noreplace => $opt->{noreplace}, } );
+    my $tv = App::MP4Meta::TV->new(
+        {
+            noreplace => $opt->{noreplace},
+            genre     => $opt->{genre},
+        }
+    );
 
     for my $file (@$args) {
         my $error = $tv->apply_meta($file);
