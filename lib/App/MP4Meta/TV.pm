@@ -9,13 +9,23 @@ package App::MP4Meta::TV;
 use App::MP4Meta::Base;
 our @ISA = 'App::MP4Meta::Base';
 
-use LWP::Simple '5.835';
 use File::Spec '3.33';
 use File::Temp '0.22', ();
 use File::Copy;
+require LWP::UserAgent;
+use HTML::TreeBuilder::XPath;
 
 use AtomicParsley::Command;
 use AtomicParsley::Command::Tags;
+
+# the wikipedia URL
+use constant WIKIPEDIA_URL => 'http://en.wikipedia.org/w/index.php?title=%s';
+
+# XPath expressions used to parse the wikipedia page
+use constant XPATH_DESCRIPTIONS =>
+  '//h3[%s]/following-sibling::table//td[@class="description" and @colspan]';
+use constant XPATH_TITLES =>
+'//h3[%s]/following-sibling::table//td[@class="summary" and @style="text-align: left;"]/b';
 
 # a list of regexes to try to parse the file
 my @file_regexes = (
@@ -26,6 +36,21 @@ my @file_regexes = (
     qr/^(?<show>.*)-S(?<season>\d\d?)E(?<episode>\d\d?)/,
     qr/^(?<show>.*)_S(?<season>\d\d?)E(?<episode>\d\d?)/,
 );
+
+sub new {
+    my $class = shift;
+    my $args  = shift;
+
+    my $self = $class->SUPER::new($args);
+
+    # LWP::UserAgent
+    $self->{'ua'} = LWP::UserAgent->new;
+
+    # cache for wikipedia pages
+    $self->{'wikipedia_cache'} = {};
+
+    return $self;
+}
 
 sub apply_meta {
     my ( $self, $path ) = @_;
@@ -61,6 +86,89 @@ sub _parse_filename {
     return;
 }
 
+# Queries wikipedia for the title and description of an episode
+# of the show.
+sub _query_wikipedia {
+    my ( $self, $title, $season, $episode ) = @_;
+
+    # firstly, lets look for "List of House episodes"
+    my $src = sprintf( WIKIPEDIA_URL, "List of $title episodes" );
+    my $file = $self->_get_wikipedia_page($src);
+
+    # parse the html file
+    my $tree = HTML::TreeBuilder::XPath->new;
+    $tree->parse_file($file);
+
+    # get the episode descriptions
+    my @descriptions =
+      $tree->findnodes_as_strings( sprintf( XPATH_DESCRIPTIONS, $season ) );
+
+    # get the episode titles
+    my @titles =
+      $tree->findnodes_as_strings( sprintf( XPATH_TITLES, $season ) );
+
+    unless (@descriptions) {
+
+        # OK, lets try the page "House (season 1)"
+        $src = sprintf( WIKIPEDIA_URL, "$title (season $season)" );
+        $file = $self->_get_wikipedia_page($src);
+
+        # parse the html file
+        $tree = HTML::TreeBuilder::XPath->new;
+        $tree->parse_file($file);
+
+        # get the episode descriptions
+        @descriptions =
+          $tree->findnodes_as_strings( sprintf( XPATH_DESCRIPTIONS, 1 ) );
+
+        # get the episode titles
+        @titles = $tree->findnodes_as_strings( sprintf( XPATH_TITLES, 1 ) );
+
+        unless (@descriptions) {
+
+            # give up :-(
+            return;
+        }
+    }
+
+    # clean up description
+    my $description = $descriptions[ $episode - 1 ];
+    chop $description;
+    $description =~ s/"/\\"/g;
+
+    # return the title and description
+    return ( $titles[ $episode - 1 ], $description );
+}
+
+# Gets a wikipedia page and saves it to a temporary file
+# Returns the temp file name
+sub _get_wikipedia_page {
+    my ( $self, $url ) = @_;
+
+    # first, check the cache
+    if ( defined $self->{'wikipedia_cache'}->{$url} ) {
+        return $self->{'wikipedia_cache'}->{$url};
+    }
+
+    # get the wikipedia url
+    my $response = $self->{ua}->get($url);
+    if ( !$response->is_success ) {
+        return;
+    }
+
+    # create a temp file
+    my $tmp = File::Temp->new( UNLINK => 0, SUFFIX => '.html' );
+    push @{ $self->{tmp_files} }, $tmp->filename;    # so it gets removed later
+
+    # write html to temp file
+    print $tmp $response->decoded_content;
+
+    # cache temp file for future queries
+    $self->{'wikipedia_cache'}->{$url} = $tmp->filename;
+
+    return $tmp->filename;
+}
+
 1;
 
 =head1 SYNOPSIS
@@ -73,5 +181,10 @@ sub _parse_filename {
 Apply metadata to the file at this path.
 
 Returns undef if success; string if error.
+
+=head1 TODO
+
+=for :list
+* Get cover image
 
 =cut
