@@ -26,6 +26,7 @@ use constant XPATH_DESCRIPTIONS =>
   '//h3[%s]/following-sibling::table//td[@class="description" and @colspan]';
 use constant XPATH_TITLES =>
 '//h3[%s]/following-sibling::table//td[@class="summary" and @style="text-align: left;"]/b';
+use constant XPATH_IMAGE => '//table[@class="infobox vevent"]//img[1]/@src';
 
 # a list of regexes to try to parse the file
 my @file_regexes = (
@@ -48,6 +49,9 @@ sub new {
 
     # cache for wikipedia pages
     $self->{'wikipedia_cache'} = {};
+
+    # cache for cover images
+    $self->{'cover_img_cache'} = {};
 
     return $self;
 }
@@ -131,13 +135,17 @@ sub _query_wikipedia {
         }
     }
 
+    # get the cover image
+    my $cover_img_url = $tree->findvalue(XPATH_IMAGE);
+    my $cover_img     = $self->_get_cover_image("http:$cover_img_url");
+
     # clean up description
     my $description = $descriptions[ $episode - 1 ];
     chop $description;
     $description =~ s/"/\\"/g;
 
     # return the title and description
-    return ( $titles[ $episode - 1 ], $description );
+    return ( $titles[ $episode - 1 ], $description, $cover_img );
 }
 
 # Gets a wikipedia page and saves it to a temporary file
@@ -169,6 +177,43 @@ sub _get_wikipedia_page {
     return $tmp->filename;
 }
 
+sub _get_cover_image {
+    my ( $self, $url ) = @_;
+
+    if ( $url =~ m/\.(jpg|png)$/ ) {
+        my $suffix = $1;
+
+        # first, check the cache
+        if ( defined $self->{'cover_img_cache'}->{$url} ) {
+            return $self->{'cover_img_cache'}->{$url};
+        }
+
+        # get the image
+        my $response = $self->{ua}->get($url);
+        if ( !$response->is_success ) {
+            return;
+        }
+
+        # create a temp file
+        my $tmp = File::Temp->new( UNLINK => 0, SUFFIX => ".$suffix" );
+        push @{ $self->{tmp_files} }, $tmp->filename; # so it gets removed later
+
+        # write img to temp file
+        binmode $tmp;
+        print $tmp $response->decoded_content;
+
+        # cache temp file for future queries
+        $self->{'cover_img_cache'}->{$url} = $tmp->filename;
+
+        return $tmp->filename;
+    }
+    else {
+
+        # can't use cover
+        return;
+    }
+}
+
 1;
 
 =head1 SYNOPSIS
@@ -181,10 +226,5 @@ sub _get_wikipedia_page {
 Apply metadata to the file at this path.
 
 Returns undef if success; string if error.
-
-=head1 TODO
-
-=for :list
-* Get cover image
 
 =cut
