@@ -26,6 +26,8 @@ use constant XPATH_DESCRIPTIONS =>
   '//h3[%s]/following-sibling::table//td[@class="description" and @colspan]';
 use constant XPATH_TITLES =>
 '//h3[%s]/following-sibling::table//td[@class="summary" and @style="text-align: left;"]/b';
+use constant XPATH_DATES =>
+'//h3[%s]/following-sibling::table//td//span[@class="bday dtstart published updated"]';
 use constant XPATH_IMAGE => '//table[@class="infobox vevent"]//img[1]/@src';
 
 # a list of regexes to try to parse the file
@@ -70,7 +72,7 @@ sub apply_meta {
     my ( $show_title, $season, $episode ) = $self->_parse_filename($file);
 
     # get data from wikipedia
-    my ( $episode_title, $episode_desc, $cover_file ) =
+    my ( $episode_title, $episode_desc, $year, $cover_file ) =
       $self->_query_wikipedia( $show_title, $season, $episode );
 
     my $tags = AtomicParsley::Command::Tags->new(
@@ -86,9 +88,8 @@ sub apply_meta {
         stik         => $self->{'media_type'},
         description  => $episode_desc,
         genre        => $self->{'genre'},
-
-        #year        => $year,
-        artwork => $cover_file
+        year         => $year,
+        artwork      => $cover_file
     );
 
     my $tempfile = $self->{ap}->write_tags( $path, $tags, !$self->{noreplace} );
@@ -148,6 +149,9 @@ sub _query_wikipedia {
     my @titles =
       $tree->findnodes_as_strings( sprintf( XPATH_TITLES, $season ) );
 
+    # get the episode date
+    my @dates = $tree->findnodes_as_strings( sprintf( XPATH_DATES, $season ) );
+
     unless (@descriptions) {
 
         # OK, lets try the page "House (season 1)"
@@ -165,6 +169,9 @@ sub _query_wikipedia {
         # get the episode titles
         @titles = $tree->findnodes_as_strings( sprintf( XPATH_TITLES, 1 ) );
 
+        # get the episode date
+        @dates = $tree->findnodes_as_strings( sprintf( XPATH_DATES, 1 ) );
+
         unless (@descriptions) {
 
             # give up :-(
@@ -181,8 +188,15 @@ sub _query_wikipedia {
     chop $description;
     $description =~ s/"/\\"/g;
 
+    # get the year
+    my $year;
+    my $date = $dates[ $episode - 1 ];
+    if ( $date =~ /^(\d{4})-\d{2}-\d{2}$/ ) {
+        $year = $1;
+    }
+
     # return the title and description
-    return ( $titles[ $episode - 1 ], $description, $cover_img );
+    return ( $titles[ $episode - 1 ], $description, $year, $cover_img );
 }
 
 # Gets a wikipedia page and saves it to a temporary file
