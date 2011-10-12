@@ -225,6 +225,7 @@ sub _get_wikipedia_page {
     my $tmp = $self->_get_tempfile('html');
 
     # write html to temp file
+    binmode($tmp, ":utf8");
     print $tmp $response->decoded_content;
 
     # cache temp file for future queries
