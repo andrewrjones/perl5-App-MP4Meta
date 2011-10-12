@@ -70,20 +70,6 @@ sub _parse_filename {
     return ( $self->_clean_title($file), $year );
 }
 
-# Make a query to imdb and get the film data.
-# Returns undef if we couldn't find the film.
-# Returns an IMDB::Film object.
-sub _query_imdb {
-    my ( $self, $title, $year ) = @_;
-
-    my $imdb = IMDB::Film->new( crit => $title, year => $year );
-
-    if ( $imdb->status ) {
-        return $imdb;
-    }
-    return;
-}
-
 # Gets the cover image and stores in a tmp file
 sub _get_cover_image {
     my ( $self, $cover_url ) = @_;

@@ -60,9 +60,6 @@ sub new {
     # cache for cover images
     $self->{'cover_img_cache'} = {};
 
-    # cache for IMDB objects
-    $self->{'imdb_cache'} = {};
-
     return $self;
 }
 
@@ -140,27 +137,6 @@ sub _parse_filename {
         }
     }
 
-    return;
-}
-
-# Get the genre from the IMDB
-sub _query_imdb {
-    my ( $self, $title ) = @_;
-
-    # first, check the cache
-    if ( defined $self->{'imdb_cache'}->{$title} ) {
-        return $self->{'imdb_cache'}->{$title};
-    }
-
-    my $imdb = IMDB::Film->new( crit => $title );
-
-    if ( $imdb->status ) {
-
-        # cache IMDB object for future queries
-        $self->{'imdb_cache'}->{$title} = $imdb;
-
-        return $imdb;
-    }
     return;
 }
 

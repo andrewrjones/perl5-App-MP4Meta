@@ -24,6 +24,9 @@ sub new {
     # stores tmp files which we clean up later
     $self->{'tmp_files'} = ();
 
+    # cache for IMDB objects
+    $self->{'imdb_cache'} = {};
+
     bless( $self, $class );
     return $self;
 }
@@ -44,6 +47,31 @@ sub _write_tags {
     return;
 }
 
+# Make a query to imdb
+# Returns undef if we couldn't find the query.
+# Returns an IMDB::Film object.
+sub _query_imdb {
+    my ( $self, $title, $year ) = @_;
+
+    # first, check the cache
+    my $key = $title;
+    $key .= $year if $year;
+    if ( defined $self->{'imdb_cache'}->{$key} ) {
+        return $self->{'imdb_cache'}->{$key};
+    }
+
+    my $imdb = IMDB::Film->new( crit => $title, year => $year );
+
+    if ( $imdb->status ) {
+
+        # cache IMDB object for future queries
+        $self->{'imdb_cache'}->{$key} = $imdb;
+
+        return $imdb;
+    }
+    return;
+}
+
 # Converts 'THE_OFFICE' to 'The Office'
 sub _clean_title {
     my ( $self, $title ) = @_;
@@ -55,6 +83,7 @@ sub _clean_title {
     return $title;
 }
 
+# Returns a File::Temp object
 sub _get_tempfile {
     my ( $self, $suffix ) = @_;
 
