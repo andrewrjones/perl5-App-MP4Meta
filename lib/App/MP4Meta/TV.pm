@@ -139,8 +139,8 @@ sub _parse_filename {
 sub _query_wikipedia {
     my ( $self, $title, $season, $episode ) = @_;
 
-    # firstly, lets look for "List of House episodes"
-    my $src = sprintf( WIKIPEDIA_URL, "List of $title episodes" );
+    # firstly, lets try the page "House (season 1)"
+    my $src = sprintf( WIKIPEDIA_URL, "$title (season $season)" );
     my $file = $self->_get_wikipedia_page($src);
 
     # parse the html file
@@ -149,19 +149,18 @@ sub _query_wikipedia {
 
     # get the episode descriptions
     my @descriptions =
-      $tree->findnodes_as_strings( sprintf( XPATH_DESCRIPTIONS, $season ) );
+      $tree->findnodes_as_strings( sprintf( XPATH_DESCRIPTIONS, 1 ) );
 
     # get the episode titles
-    my @titles =
-      $tree->findnodes_as_strings( sprintf( XPATH_TITLES, $season ) );
+    my @titles = $tree->findnodes_as_strings( sprintf( XPATH_TITLES, 1 ) );
 
     # get the episode date
-    my @dates = $tree->findnodes_as_strings( sprintf( XPATH_DATES, $season ) );
+    my @dates = $tree->findnodes_as_strings( sprintf( XPATH_DATES, 1 ) );
 
     unless (@descriptions) {
 
-        # OK, lets try the page "House (season 1)"
-        $src = sprintf( WIKIPEDIA_URL, "$title (season $season)" );
+        # OK, lets look for "List of House episodes"
+        $src = sprintf( WIKIPEDIA_URL, "List of $title episodes" );
         $file = $self->_get_wikipedia_page($src);
 
         # parse the html file
@@ -170,13 +169,14 @@ sub _query_wikipedia {
 
         # get the episode descriptions
         @descriptions =
-          $tree->findnodes_as_strings( sprintf( XPATH_DESCRIPTIONS, 1 ) );
+          $tree->findnodes_as_strings( sprintf( XPATH_DESCRIPTIONS, $season ) );
 
         # get the episode titles
-        @titles = $tree->findnodes_as_strings( sprintf( XPATH_TITLES, 1 ) );
+        @titles =
+          $tree->findnodes_as_strings( sprintf( XPATH_TITLES, $season ) );
 
         # get the episode date
-        @dates = $tree->findnodes_as_strings( sprintf( XPATH_DATES, 1 ) );
+        @dates = $tree->findnodes_as_strings( sprintf( XPATH_DATES, $season ) );
 
         unless (@descriptions) {
 
@@ -275,7 +275,7 @@ sub _get_cover_image {
 
 =head1 SYNOPSIS
 
-  my $film = App::MP4Meta::TV->new;
+  my $film = App::MP4Meta::TV->new({ genre => 'Comedy' });
   $film->apply_meta( '/path/to/THE_MIGHTY_BOOSH_S1E1.m4v' );
   
 =method apply_meta( $path )
