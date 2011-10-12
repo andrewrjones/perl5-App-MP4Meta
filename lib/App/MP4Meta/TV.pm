@@ -138,6 +138,11 @@ sub _query_wikipedia {
     my $src = sprintf( WIKIPEDIA_URL, "$title (season $season)" );
     my $file = $self->_get_wikipedia_page($src);
 
+    unless ($file) {
+        $src = sprintf( WIKIPEDIA_URL, "$title (series $season)" );
+        $file = $self->_get_wikipedia_page($src);
+    }
+
     # parse the html file
     my $tree = HTML::TreeBuilder::XPath->new;
     $tree->parse_file($file);
