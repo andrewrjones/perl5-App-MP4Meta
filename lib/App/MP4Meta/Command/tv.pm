@@ -32,6 +32,10 @@ sub opt_spec {
     return (
         [ "genre=s",     "The genre of the TV Show" ],
         [ "coverfile=s", "The location of the cover image" ],
+        [
+            "wikipedia=s",
+"The wikipedia page to use. Because sometimes we can't work it out..."
+        ],
         [ "noreplace", "Don't replace the file - creates a temp file instead" ],
     );
 }
@@ -61,9 +65,10 @@ sub execute {
     require App::MP4Meta::TV;
     my $tv = App::MP4Meta::TV->new(
         {
-            noreplace => $opt->{noreplace},
-            genre     => $opt->{genre},
-            coverfile => $opt->{coverfile},
+            noreplace          => $opt->{noreplace},
+            genre              => $opt->{genre},
+            coverfile          => $opt->{coverfile},
+            wikipedia_page_url => $opt->{wikipedia},
         }
     );
 

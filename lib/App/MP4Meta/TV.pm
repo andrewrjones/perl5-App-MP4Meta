@@ -41,8 +41,9 @@ sub new {
 
     my $self = $class->SUPER::new($args);
 
-    $self->{'genre'}     = $args->{'genre'};
-    $self->{'coverfile'} = $args->{'coverfile'};
+    $self->{'genre'}              = $args->{'genre'};
+    $self->{'coverfile'}          = $args->{'coverfile'};
+    $self->{'wikipedia_page_url'} = $args->{'wikipedia_page_url'};
 
     $self->{'media_type'} = 'TV Show';
 
@@ -134,10 +135,22 @@ sub _parse_filename {
 sub _query_wikipedia {
     my ( $self, $title, $season, $episode ) = @_;
 
-    # firstly, lets try the page "House (season 1)"
-    my $src = sprintf( WIKIPEDIA_URL, "$title (season $season)" );
-    my $file = $self->_get_wikipedia_page($src);
+    my $src;
+    my $file;
 
+    # have we been given a wikipedia page?
+    $src = $self->{'wikipedia_page_url'};
+    if ($src) {
+        $file = $self->_get_wikipedia_page($src);
+    }
+
+    # lets try the page "House (season 1)"
+    unless ($file) {
+        $src = sprintf( WIKIPEDIA_URL, "$title (season $season)" );
+        $file = $self->_get_wikipedia_page($src);
+    }
+
+    # or series...
     unless ($file) {
         $src = sprintf( WIKIPEDIA_URL, "$title (series $season)" );
         $file = $self->_get_wikipedia_page($src);
@@ -225,7 +238,7 @@ sub _get_wikipedia_page {
     my $tmp = $self->_get_tempfile('html');
 
     # write html to temp file
-    binmode($tmp, ":utf8");
+    binmode( $tmp, ":utf8" );
     print $tmp $response->decoded_content;
 
     # cache temp file for future queries
