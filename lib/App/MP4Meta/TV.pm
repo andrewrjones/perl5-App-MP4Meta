@@ -57,10 +57,10 @@ sub apply_meta {
         return "Error: could not find '$show_title' on the IMDB (for $path)";
     }
 
-    my @episodes = @{ $imdb->episodes() };
-    unless (@episodes) {
+    unless ( $imdb->episodes() ) {
         return "Error: could not get episodes for '$show_title'";
     }
+    my @episodes = @{ $imdb->episodes() };
 
     my ( $episode_title, $episode_desc, $year ) =
       $self->_get_episode_data( \@episodes, $season, $episode );
