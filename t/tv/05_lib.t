@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 33;
+use Test::More tests => 24;
 
 BEGIN { use_ok('App::MP4Meta::TV'); }
 require_ok('App::MP4Meta::TV');
@@ -38,40 +38,40 @@ is( $title,   'Dexter' );
 is( $season,  1 );
 is( $episode, 1 );
 
-my $tmpfile = $t->_get_wikipedia_page(
-    'http://en.wikipedia.org/w/index.php?title=List of Extras episodes');
-ok( -e $tmpfile );
-
-my ( $episode_title, $episode_desc, $episode_year, $cover_img ) =
-  $t->_query_wikipedia( 'Extras', 1, 1 );
-is( $episode_title, 'Ben Stiller' );
-is( $episode_desc,
-'Andy and Maggie are playing extras in the film Ben Stiller is directing, which is based on the life of Goran, an Eastern European man whose wife and son were killed in the Yugoslav Wars. Andy attempts to get a speaking part by befriending Goran, who eventually gets Andy a spoken line. However, Andy gets in an argument with Stiller just before shooting his scene and is kicked off the set. Maggie, meanwhile, takes an interest in one of the crew but it goes wrong after Andy points out that her would-be beau has one leg shorter than the other, which Maggie is unable to stop herself making an issue of.'
+my @episodes = (
+    {
+        date    => '9 July 2001',
+        episode => '1',
+        id      => '0664504',
+        plot =>
+'David Brent is the manager of the Slough branch of the Wernham Hogg paper company and he and some of his staff are having a bit of a rough morning after over-imbibing the night before. When his boss Jennifer Taylor-Clark drops in she tells him that the company can no longer afford both a Swindon and a Slough branch and that one is to be merged into the other. She also tells him there are going to be redundancies. Word spreads through the office quickly but David assures everyone that their jobs are safe.',
+        season => '1',
+        title  => 'Downsize'
+    },
+    {
+        date    => '16 July 2001',
+        episode => '2',
+        id      => '0664509',
+        plot =>
+'David hires Donna, his lodger and the daughter of his best friend. While showing her round the office he discovers a doctored pornographic image of himself. Gareth, due to his covert operations skills, is told to catch the culprit.',
+        season => '1',
+        title  => 'Work Experience'
+    },
 );
-is( $episode_year, 2005 );
-ok($cover_img);
-
-( $episode_title, $episode_desc, $episode_year, $cover_img ) =
-  $t->_query_wikipedia( 'Extras', 2, 1 );
-is( $episode_title, 'Orlando Bloom' );
+my ( $episode_title, $episode_desc, $episode_year ) =
+  $t->_get_episode_data( \@episodes, 1, 1 );
+is( $episode_title, 'Downsize' );
 is( $episode_desc,
-'Andy\'s new sitcom, When The Whistle Blows, is being filmed, whilst Maggie appears as an extra in a courtroom drama with Orlando Bloom and Sophia Myles. The audience find the heavily-rewritten sitcom funny but Andy, forced to wear glasses and a wig, feels like he has sold out, particularly when dim-witted and un-PC Keith Chegwin is cast in a cameo role. The character Alfie (renamed Keith by Andy when Chegwin proves unable to respond to being addressed by any name other than his own) is cast as was meant to be played by Keith Harris, but Harris declined the role of Alfie, stating \"Ricky Gervais wanted me to be a racist bigot\". Meanwhile, Orlando Bloom refuses to believe that Maggie does not find him attractive and waxes lyrical about his dislike for Johnny Depp.'
+'David Brent is the manager of the Slough branch of the Wernham Hogg paper company and he and some of his staff are having a bit of a rough morning after over-imbibing the night before. When his boss Jennifer Taylor-Clark drops in she tells him that the company can no longer afford both a Swindon and a Slough branch and that one is to be merged into the other. She also tells him there are going to be redundancies. Word spreads through the office quickly but David assures everyone that their jobs are safe.'
 );
-is( $episode_year, 2006 );
-ok($cover_img);
+is( $episode_year, 2001 );
 
-( $episode_title, $episode_desc, $episode_year, $cover_img ) =
-  $t->_query_wikipedia( 'House', 2, 1 );
-is( $episode_title, 'Acceptance' );
+( $episode_title, $episode_desc, $episode_year ) =
+  $t->_get_episode_data( \@episodes, 1, 2 );
+is( $episode_title, 'Work Experience' );
 is( $episode_desc,
-'House is brought in for a consult on a Death Row inmate (LL Cool J) with mysterious symptoms. Cameron feels the hospital\'s resources are better used elsewhere for a young cancer patient. House and Stacy try to establish a good work relationship, especially after he lies to her to secure the transfer of the inmate to the hospital.Final diagnosis: Methanol poisoning and pheochromocytoma (Clarence) and Lung cancer (Cindy)'
+'David hires Donna, his lodger and the daughter of his best friend. While showing her round the office he discovers a doctored pornographic image of himself. Gareth, due to his covert operations skills, is told to catch the culprit.'
 );
-is( $episode_year, 2005 );
-ok($cover_img);
-
-my $imdb   = $t->_query_imdb('Extras');
-my @genres = @{ $imdb->genres };
-is( $genres[0], 'Comedy' );
+is( $episode_year, 2001 );
 
 undef $t;
-ok( !-e $tmpfile );

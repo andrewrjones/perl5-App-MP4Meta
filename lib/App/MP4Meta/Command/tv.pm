@@ -16,7 +16,7 @@ use App::MP4Meta -command;
 
 This command applies metadata to one or more TV Series. It parses the filename in order to get the shows title and its season and episode number.
 
-It gets the TV Series metadata by querying Wikipedia. It then uses AtomicParsley to apply the metadata to the file.
+It gets the TV Series metadata by querying the IMDB. It then uses AtomicParsley to apply the metadata to the file.
 
 By default, it will apply the metadata to the existing file. If you want it to write to a temporary file and leave the existing file untouched, provide the C<--noreplace> option.
 
@@ -32,10 +32,6 @@ sub opt_spec {
     return (
         [ "genre=s",     "The genre of the TV Show" ],
         [ "coverfile=s", "The location of the cover image" ],
-        [
-            "wikipedia=s",
-"The wikipedia page to use. Because sometimes we can't work it out..."
-        ],
         [ "noreplace", "Don't replace the file - creates a temp file instead" ],
     );
 }
@@ -65,10 +61,9 @@ sub execute {
     require App::MP4Meta::TV;
     my $tv = App::MP4Meta::TV->new(
         {
-            noreplace          => $opt->{noreplace},
-            genre              => $opt->{genre},
-            coverfile          => $opt->{coverfile},
-            wikipedia_page_url => $opt->{wikipedia},
+            noreplace => $opt->{noreplace},
+            genre     => $opt->{genre},
+            coverfile => $opt->{coverfile},
         }
     );
 
