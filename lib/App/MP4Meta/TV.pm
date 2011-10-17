@@ -21,6 +21,7 @@ my @file_regexes = (
     qr/^(?<show>.*) - S(?<season>\d\d?)E(?<episode>\d\d?)/i,
     qr/^(?<show>.*)-S(?<season>\d\d?)E(?<episode>\d\d?)/,
     qr/^(?<show>.*)_S(?<season>\d\d?)E(?<episode>\d\d?)/,
+    qr/^S(?<season>\d\d?)E(?<episode>\d\d?)$/,
 );
 
 sub new {
@@ -30,6 +31,7 @@ sub new {
     my $self = $class->SUPER::new($args);
 
     $self->{'genre'}     = $args->{'genre'};
+    $self->{'title'}     = $args->{'title'};
     $self->{'coverfile'} = $args->{'coverfile'};
 
     $self->{'media_type'} = 'TV Show';
@@ -104,7 +106,7 @@ sub _parse_filename {
     # see if we have a regex that matches
     for my $r (@file_regexes) {
         if ( $file =~ $r ) {
-            my $show    = $+{show};
+            my $show    = $self->{title} // $+{show};
             my $season  = $+{season};
             my $episode = $+{episode};
 
