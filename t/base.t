@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 22;
+use Test::More tests => 23;
 
 BEGIN { use_ok('App::MP4Meta::Base'); }
 require_ok('App::MP4Meta::Base');
@@ -18,9 +18,10 @@ ok( !$b->{'noreplace'} );
 $b = App::MP4Meta::Base->new( { noreplace => 1 } );
 ok( $b->{'noreplace'} );
 
-is( $b->_clean_title('THE_OFFICE'), 'The Office' );
-is( $b->_clean_title('EXTRAS'),     'Extras' );
-is( $b->_clean_title('IF...'),      'If...' );
+is( $b->_clean_title('THE_OFFICE'),  'The Office' );
+is( $b->_clean_title('Gossip.girl'), 'Gossip Girl' );
+is( $b->_clean_title('EXTRAS'),      'Extras' );
+is( $b->_clean_title('IF...'),       'If...' );
 
 # get_cover_image
 ok( !$b->_get_cover_image('cover.gif') );

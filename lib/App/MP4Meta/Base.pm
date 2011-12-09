@@ -126,6 +126,7 @@ sub _clean_title {
     my ( $self, $title ) = @_;
 
     $title =~ s/(-|_)/ /g;
+    $title =~ s/(?<=\w)\.(?=\w)/ /g;
     $title = lc($title);
     $title = join ' ', map( { ucfirst() } split /\s/, $title );
 
