@@ -1,5 +1,6 @@
 {{$NEXT}}
-    Accept files named 'gossip.girl.s01e01.m4v'
+    Implement the "tv" command.
+    Implement the "musicvideo" command.
 
 1.112830  2011-10-10 19:34:55 Europe/London
     Check the return value of AtomicParsley::Command, and return error if something goes wrong.

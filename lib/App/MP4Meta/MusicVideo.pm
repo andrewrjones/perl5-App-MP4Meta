@@ -48,7 +48,7 @@ sub apply_meta {
     return $self->_write_tags( $path, $tags );
 }
 
-# Parse the filename in order to get the film title. Returns the title.
+# Parse the filename and returns the videos artist and title.
 sub _parse_filename {
     my ( $self, $file ) = @_;
 

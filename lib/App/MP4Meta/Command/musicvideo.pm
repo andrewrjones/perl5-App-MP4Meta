@@ -12,7 +12,11 @@ use App::MP4Meta -command;
 
   mp4meta musicvideo "Michael Jackson vs Prodigy - Bille Girl.m4v"
 
-This command applies metadata to one or more films. It parses the filename in order to get the videos artist and title.
+This command applies metadata to one or more music videos. It parses the filename in order to get the videos artist and title.
+
+It currently supports the following file formats:
+
+  artist - title.m4v
 
 By default, it will apply the metadata to the existing file. If you want it to write to a temporary file and leave the existing file untouched, provide the C<--noreplace> option.
 
@@ -26,9 +30,9 @@ sub abstract {
 
 sub opt_spec {
     return (
-        [ "genre=s",     "The genre of the TV Show" ],
+        [ "genre=s",     "The genre of the music video" ],
         [ "coverfile=s", "The location of the cover image" ],
-        [ "title=s",     "The title of the TV Show" ],
+        [ "title=s",     "The title of the music video" ],
         [ "noreplace", "Don't replace the file - creates a temp file instead" ],
     );
 }
