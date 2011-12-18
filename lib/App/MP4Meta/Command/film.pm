@@ -11,7 +11,7 @@ use App::MP4Meta -command;
 =head1 SYNOPSIS
 
   mp4meta film PULP_FICTION.mp4 "The Truman Show.m4v"
-  
+
   mp4meta film --noreplace THE-ITALIAN-JOB-2003.m4v
 
 This command applies metadata to one or more films. It parses the filename in order to get the films title and (optionally) year.

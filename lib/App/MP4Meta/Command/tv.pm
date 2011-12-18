@@ -11,7 +11,7 @@ use App::MP4Meta -command;
 =head1 SYNOPSIS
 
   mp4meta tv THE_MIGHTY_BOOSH_S1E1.m4v THE_MIGHTY_BOOSH_S1E2.m4v
-  
+
   mp4meta film --noreplace 24.S01E01.m4v
 
 This command applies metadata to one or more TV Series. It parses the filename in order to get the shows title and its season and episode number.
