@@ -42,7 +42,7 @@ is( $title,   'Dexter' );
 is( $season,  1 );
 is( $episode, 1 );
 $t->{title} = 'Extras';
-( $title, $season, $episode ) = $t->_parse_filename('S01E01.m4v');
+( $title, $season, $episode ) = $t->_parse_filename('Foo S01E01.m4v');
 is( $title,   'Extras' );
 is( $season,  1 );
 is( $episode, 1 );

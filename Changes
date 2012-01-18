@@ -1,4 +1,5 @@
 {{$NEXT}}
+    Be a bit less restrictive when parsing tv file names.
 
 1.113520  2011-12-18 01:03:19 Europe/London
     Implement the "tv" command.

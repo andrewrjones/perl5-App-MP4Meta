@@ -21,7 +21,7 @@ my @file_regexes = (
     qr/^(?<show>.*) - S(?<season>\d\d?)E(?<episode>\d\d?)/i,
     qr/^(?<show>.*)-S(?<season>\d\d?)E(?<episode>\d\d?)/,
     qr/^(?<show>.*)_S(?<season>\d\d?)E(?<episode>\d\d?)/,
-    qr/^S(?<season>\d\d?)E(?<episode>\d\d?)$/,
+    qr/S(?<season>\d\d?)E(?<episode>\d\d?)/,
 );
 
 sub new {
