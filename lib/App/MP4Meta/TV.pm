@@ -30,6 +30,8 @@ sub new {
 
     my $self = $class->SUPER::new($args);
 
+    $self->{'without_imdb'} = $args->{'without_imdb'};
+
     $self->{'genre'}     = $args->{'genre'};
     $self->{'title'}     = $args->{'title'};
     $self->{'coverfile'} = $args->{'coverfile'};
@@ -41,59 +43,83 @@ sub new {
 
 sub apply_meta {
     my ( $self, $path ) = @_;
+    my %tags;
 
     # get the file name
     my ( $volume, $directories, $file ) = File::Spec->splitpath($path);
 
     # parse the filename for the title, season and episode
-    my ( $show_title, $season, $episode ) = $self->_parse_filename($file);
-    unless ( $show_title && $season && $episode ) {
+    ( $tags{show_title}, $tags{season}, $tags{episode} ) =
+      $self->_parse_filename($file);
+    unless ( $tags{show_title} && $tags{season} && $tags{episode} ) {
         return "Error: could not parse the filename for $path";
     }
 
     # get data from IMDB
-    my $imdb = $self->_query_imdb($show_title);
-    unless ($imdb) {
-        return "Error: could not find '$show_title' on the IMDB (for $path)";
+    my $imdb = $self->_query_imdb( $tags{show_title} );
+    if ($imdb) {
+
+        unless ( $imdb->episodes() ) {
+            my $error = "Error: could not get episodes for '$tags{show_title}'";
+            unless ( $self->without_imdb ) {
+                return $error;
+            }
+            else {
+                say $error . ", continuing";
+            }
+        }
+        my @episodes = @{ $imdb->episodes() };
+
+        my @genres = @{ $imdb->genres };
+        $tags{genre} = $genres[0];
+
+        $tags{cover_file} //= $self->{coverfile};
+        unless ( $tags{cover_file} ) {
+            $tags{cover_file} = $self->_get_cover_image( $imdb->cover );
+        }
+
+        ( $tags{episode_title}, $tags{episode_desc}, $tags{year} ) =
+          $self->_get_episode_data( \@episodes, $tags{season}, $tags{episode} );
+        unless ( $tags{episode_title} && $tags{episode_desc} ) {
+            my $error = "Error: could not get episodes for '$tags{show_title}'";
+            unless ( $self->without_imdb ) {
+                return $error;
+            }
+            else {
+                say $error . ", continuing";
+            }
+        }
+
+    }
+    else {
+        my $error =
+          "Error: could not find '$tags{show_title}' on the IMDB (for $path)";
+        unless ( $self->without_imdb ) {
+            return $error;
+        }
+        else {
+            say $error . ", continuing";
+        }
     }
 
-    unless ( $imdb->episodes() ) {
-        return "Error: could not get episodes for '$show_title'";
-    }
-    my @episodes = @{ $imdb->episodes() };
-
-    my ( $episode_title, $episode_desc, $year ) =
-      $self->_get_episode_data( \@episodes, $season, $episode );
-    unless ( $episode_title && $episode_desc ) {
-        return "Error: could not get episodes for '$show_title'";
-    }
-
-    my @genres = @{ $imdb->genres };
-    my $genre  = $genres[0];
-
-    my $cover_file //= $self->{coverfile};
-    unless ($cover_file) {
-        $cover_file = $self->_get_cover_image( $imdb->cover );
-    }
-
-    my $tags = AtomicParsley::Command::Tags->new(
-        artist       => $show_title,
-        albumArtist  => $show_title,
-        title        => $episode_title,
-        album        => "$show_title, Season $season",
-        tracknum     => $episode,
-        TVShowName   => $show_title,
-        TVEpisode    => $episode,
-        TVEpisodeNum => $episode,
-        TVSeasonNum  => $season,
+    my $apTags = AtomicParsley::Command::Tags->new(
+        artist       => $tags{show_title},
+        albumArtist  => $tags{show_title},
+        title        => $tags{episode_title},
+        album        => "$tags{show_title}, Season $tags{season}",
+        tracknum     => $tags{episode},
+        TVShowName   => $tags{show_title},
+        TVEpisode    => $tags{episode},
+        TVEpisodeNum => $tags{episode},
+        TVSeasonNum  => $tags{season},
         stik         => $self->{'media_type'},
-        description  => $episode_desc,
-        genre        => $genre,
-        year         => $year,
-        artwork      => $cover_file
+        description  => $tags{episode_desc},
+        genre        => $tags{genre},
+        year         => $tags{year},
+        artwork      => $tags{cover_file}
     );
 
-    return $self->_write_tags( $path, $tags );
+    return $self->_write_tags( $path, $apTags );
 }
 
 # Parse the filename in order to get the series title the and season and episode number.
