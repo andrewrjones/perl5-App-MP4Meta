@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 30;
+use Test::More tests => 33;
 
 BEGIN { use_ok('App::MP4Meta::TV'); }
 require_ok('App::MP4Meta::TV');
@@ -24,6 +24,10 @@ my $episode;
 is( $title,   'Heroes' );
 is( $season,  3 );
 is( $episode, 1 );
+( $title, $season, $episode ) = $t->_parse_filename('Miranda S01 E02.m4v');
+is( $title,   'Miranda' );
+is( $season,  1 );
+is( $episode, 2 );
 ( $title, $season, $episode ) = $t->_parse_filename('gossip.girl.s01e01.m4v');
 is( $title,   'Gossip Girl' );
 is( $season,  1 );
