@@ -3,15 +3,13 @@ use warnings;
 
 package App::MP4Meta::Source::TVDB;
 
-# ABSTRACT: Contains data for a TV Episode.
+# ABSTRACT: Searches http://thetvbd.com for TV data.
 
 use App::MP4Meta::Source::Data::TVEpisode;
 
 use Net::TVDB;
 use File::Temp  ();
 use LWP::Simple ();
-
-use Data::Dumper;
 
 sub new {
     my $class = shift;
@@ -31,11 +29,11 @@ sub new {
 sub get_episode {
     my ( $self, $args ) = @_;
 
-    die 'no title'   unless $args->{title};
+    die 'no title'   unless $args->{show_title};
     die 'no season'  unless $args->{season};
     die 'no episode' unless $args->{episode};
 
-    my $series_list = $self->{tvdb}->search( $args->{title} );
+    my $series_list = $self->{tvdb}->search( $args->{show_title} );
 
     die 'no series found' unless @$series_list;
 

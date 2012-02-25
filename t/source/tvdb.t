@@ -14,9 +14,9 @@ my $tvdb;    # App::MP4Meta::Source::TVDB object
 
 # search terms
 my %search_terms = (
-    title   => 'men behaving badly',
-    season  => 6,
-    episode => 1
+    show_title => 'men behaving badly',
+    season     => 6,
+    episode    => 1
 );
 
 # empty new
