@@ -21,6 +21,9 @@ sub new {
     # TODO: specify language
     $self->{tvdb} = Net::TVDB->new();
 
+    # cache results
+    $self->{cache} = {};
+
     bless( $self, $class );
     return $self;
 }
@@ -39,8 +42,16 @@ sub get_episode {
     # TODO: ability to search results i.e. by year
     my $series = @{$series_list}[0];
 
-    # fetches full series data
-    $series->fetch();
+    if ( $self->{cache}->{ $series->id } ) {
+        $series = $self->{cache}->{ $series->id };
+    }
+    else {
+
+        # fetches full series data
+        $series->fetch();
+
+        $series = $self->{cache}->{ $series->id } = $series;
+    }
 
     # get banner
     my $cover_file;
