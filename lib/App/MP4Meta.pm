@@ -7,6 +7,10 @@ package App::MP4Meta;
 
 use App::Cmd::Setup -app;
 
+1;
+
+__END__
+
 =head1 DESCRIPTION
 
 The C<mp4meta> command applies iTunes-like metadata to an mp4 file. The metadata is obtained by parsing the filename and searching the Internet to find its title, description and cover image, amongst others.
@@ -22,5 +26,3 @@ The C<tv> command parses the filename and searches the IMDB for TV Series metada
 =head2 musicvideo
 
 The C<film> command parses the filename in order to get the videos artist and song title. See L<App::MP4Meta::Command::musicvideo> for more information.
-
-1;
