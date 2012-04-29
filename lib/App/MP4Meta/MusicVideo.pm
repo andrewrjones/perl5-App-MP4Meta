@@ -18,10 +18,6 @@ sub new {
 
     my $self = $class->SUPER::new($args);
 
-    $self->{'genre'}     = $args->{'genre'};
-    $self->{'title'}     = $args->{'title'};
-    $self->{'coverfile'} = $args->{'coverfile'};
-
     $self->{'media_type'} = 'Music Video';
 
     return $self;
@@ -35,6 +31,8 @@ sub apply_meta {
 
     # parse the filename for the film title and optional year
     my ( $artist, $title ) = $self->_parse_filename($file);
+
+    # TODO: check we have a title and artist
 
     my $tags = AtomicParsley::Command::Tags->new(
         artist      => $artist,

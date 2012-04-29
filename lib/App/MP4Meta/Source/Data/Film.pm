@@ -1,9 +1,9 @@
 use strict;
 use warnings;
 
-package App::MP4Meta::Source::Data::TVEpisode;
+package App::MP4Meta::Source::Data::Film;
 
-# ABSTRACT: Contains data for a TV Episode.
+# ABSTRACT: Contains data for a film.
 
 use App::MP4Meta::Source::Data::Base;
 our @ISA = 'App::MP4Meta::Source::Data::Base';

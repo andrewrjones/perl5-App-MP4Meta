@@ -1,12 +1,25 @@
 use strict;
 use warnings;
 
-package App::MP4Meta::Source::Data::TVEpisode;
+package App::MP4Meta::Source::Data::Base;
 
-# ABSTRACT: Contains data for a TV Episode.
+# ABSTRACT: Base class for metadata.
 
-use App::MP4Meta::Source::Data::Base;
-our @ISA = 'App::MP4Meta::Source::Data::Base';
+use Object::Tiny qw(
+  cover
+  genre
+  overview
+  title
+  year
+);
+
+sub merge {
+    my ( $self, $to_merge ) = @_;
+
+    while ( my ( $key, $value ) = each(%$to_merge) ) {
+        $self->{$key} = $value unless $self->{$key};
+    }
+}
 
 1;
 

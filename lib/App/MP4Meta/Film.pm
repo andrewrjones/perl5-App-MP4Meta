@@ -12,39 +12,80 @@ our @ISA = 'App::MP4Meta::Base';
 use File::Spec '3.33';
 use AtomicParsley::Command::Tags;
 
+use App::MP4Meta::Source::Data::Film;
+
+sub new {
+    my $class = shift;
+    my $args  = shift;
+
+    my $self = $class->SUPER::new($args);
+
+    $self->{'media_type'} = 'Movie';
+
+    return $self;
+}
+
 sub apply_meta {
     my ( $self, $path ) = @_;
+    my %tags = (
+        title => $self->{'title'},
+        year  => $self->{'year'}
+    );
 
     # get the file name
     my ( $volume, $directories, $file ) = File::Spec->splitpath($path);
 
-    # parse the filename for the film title and optional year
-    my ( $title, $year ) = $self->_parse_filename($file);
+    unless ( $tags{title} ) {
 
-    # get data from IMDB
-    my $imdb = $self->_query_imdb( $title, $year );
-    unless ($imdb) {
-        return "Error: could not find '$title' on the IMDB (for $path)";
+        # parse the filename for the title, season and episode
+        ( $tags{title}, $tags{year} ) = $self->_parse_filename($file);
+        unless ( $tags{title} ) {
+            return "Error: could not parse the filename for $path";
+        }
     }
 
-    # try and get a cover file
-    my $cover_file;
-    if ( $imdb->cover ) {
-        $cover_file = $self->_get_cover_image( $imdb->cover );
+    my $film = App::MP4Meta::Source::Data::Film->new(
+        genre => $self->{'genre'},
+        cover => $self->{'cover'},
+        year  => $self->{'year'},
+    );
+    unless ( _film_is_complete($film) ) {
+        for my $source ( @{ $self->{'sources_objects'} } ) {
+            say sprintf( "trying source '%s'", $source->name )
+              if $self->{verbose};
+
+            # merge new epiosde into previous
+            $film->merge( $source->get_film( \%tags ) );
+
+            # last if we have everything
+            last
+              if ( _film_is_complete($film) );
+        }
     }
 
-    my @genres = @{ $imdb->genres };
-    my $genre  = $genres[0];
+    # check what we have
+    unless ( $film->overview ) {
+        if (   $self->{'continue_without_any'}
+            || $self->{'continue_without_overview'} )
+        {
+            say 'no overview found; continuing';
+        }
+        else {
+            return sprintf( 'no overview found for %s', $tags{title} );
+        }
+    }
 
-    my $tags = AtomicParsley::Command::Tags->new(
-        title       => $imdb->title,
-        description => $imdb->storyline,
-        genre       => $genre,
-        year        => $imdb->year,
-        artwork     => $cover_file
+    my $apTags = AtomicParsley::Command::Tags->new(
+        title       => $tags{title},
+        description => $film->overview,
+        genre       => $film->genre,
+        year        => $film->year,
+        artwork     => $film->cover,
+        stik        => $self->{'media_type'},
     );
 
-    return $self->_write_tags( $path, $tags );
+    say 'writing tags' if $self->{verbose};
+    return $self->_write_tags( $path, $apTags );
 }
 
 # Parse the filename in order to get the film title. Returns the title.
@@ -62,6 +103,11 @@ sub _parse_filename {
     }
 
     return ( $self->_clean_title($file), $year );
+}
+
+sub _film_is_complete {
+    my $film = shift;
+    return ( $film->overview && $film->genre && $film->year && $film->cover );
 }
 
 1;

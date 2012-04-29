@@ -8,6 +8,8 @@ package App::MP4Meta::Command::film;
 
 use App::MP4Meta -command;
 
+use Try::Tiny;
+
 =head1 SYNOPSIS
 
   mp4meta film PULP_FICTION.mp4 "The Truman Show.m4v"
@@ -30,7 +32,16 @@ sub abstract {
 
 sub opt_spec {
     return (
+        [ "genre=s",     "The genre of the TV Show" ],
+        [ "coverfile=s", "The location of the cover image" ],
+        [ "sources=s@", "The sources to search", { default => [qw/IMDB/] } ],
+        [ "title=s",    "The title of the Film" ],
         [ "noreplace", "Don't replace the file - creates a temp file instead" ],
+        [ "verbose",   "Print verbosely" ],
+        [
+            "withoutany",
+"Continue to process even if we can not find any information on the internet"
+        ],
     );
 }
 
@@ -57,12 +68,33 @@ sub execute {
     my ( $self, $opt, $args ) = @_;
 
     require App::MP4Meta::Film;
-    my $film = App::MP4Meta::Film->new( { noreplace => $opt->{noreplace}, } );
+    my $film = App::MP4Meta::Film->new(
+        {
+            noreplace            => $opt->{noreplace},
+            genre                => $opt->{genre},
+            sources              => $opt->{sources},
+            title                => $opt->{title},
+            coverfile            => $opt->{coverfile},
+            verbose              => $opt->{verbose},
+            continue_without_any => $opt->{withoutany},
+        }
+    );
 
     for my $file (@$args) {
-        my $error = $film->apply_meta($file);
-        say $error if $error;
+        say "processing $file" if $opt->{verbose};
+        my $error;
+        try {
+            $error = $film->apply_meta($file);
+        }
+        catch {
+            $error = "Error applying meta to $file: $_";
+        }
+        finally {
+            say $error if $error;
+        };
     }
+
+    say 'done' if $opt->{verbose};
 }
 
 1;

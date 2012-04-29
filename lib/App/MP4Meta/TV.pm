@@ -10,8 +10,9 @@ use App::MP4Meta::Base;
 our @ISA = 'App::MP4Meta::Base';
 
 use File::Spec '3.33';
-use HTML::TreeBuilder::XPath;
 use AtomicParsley::Command::Tags;
+
+use App::MP4Meta::Source::Data::TVEpisode;
 
 # a list of regexes to try to parse the file
 my @file_regexes = (
@@ -30,12 +31,20 @@ sub new {
 
     my $self = $class->SUPER::new($args);
 
-    $self->{'without_imdb'} = $args->{'without_imdb'};
+    # args for skipping
+    $self->{'continue_without_any'}      = $args->{'continue_without_any'};
+    $self->{'continue_without_overview'} = $args->{'continue_without_overview'};
+    $self->{'continue_without_genre'}    = $args->{'continue_without_genre'};
+    $self->{'continue_without_year'}     = $args->{'continue_without_year'};
+    $self->{'continue_without_cover'}    = $args->{'continue_without_cover'};
 
-    $self->{'genre'}     = $args->{'genre'};
-    $self->{'title'}     = $args->{'title'};
-    $self->{'coverfile'} = $args->{'coverfile'};
+    # attributes
+    $self->{'season'}   = $args->{'season'};
+    $self->{'episode'}  = $args->{'episode'};
+    $self->{'overview'} = $args->{'overview'};
+    $self->{'year'}     = $args->{'year'};
 
+    # we are a TV Show
     $self->{'media_type'} = 'TV Show';
 
     return $self;
@@ -43,69 +52,62 @@ sub new {
 
 sub apply_meta {
     my ( $self, $path ) = @_;
-    my %tags;
+    my %tags = (
+        show_title => $self->{'title'},
+        season     => $self->{'season'},
+        episode    => $self->{'episode'},
+    );
 
     # get the file name
     my ( $volume, $directories, $file ) = File::Spec->splitpath($path);
 
-    # parse the filename for the title, season and episode
-    ( $tags{show_title}, $tags{season}, $tags{episode} ) =
-      $self->_parse_filename($file);
     unless ( $tags{show_title} && $tags{season} && $tags{episode} ) {
-        return "Error: could not parse the filename for $path";
+
+        # parse the filename for the title, season and episode
+        ( $tags{show_title}, $tags{season}, $tags{episode} ) =
+          $self->_parse_filename($file);
+        unless ( $tags{show_title} && $tags{season} && $tags{episode} ) {
+            return "Error: could not parse the filename for $path";
+        }
     }
 
-    # get data from IMDB
-    my $imdb = $self->_query_imdb( $tags{show_title} );
-    if ($imdb) {
+    my $episode = App::MP4Meta::Source::Data::TVEpisode->new(
+        genre    => $self->{'genre'},
+        cover    => $self->{'cover'},
+        overview => $self->{'overview'},
+        year     => $self->{'year'},
+    );
+    unless ( _episode_is_complete($episode) ) {
+        for my $source ( @{ $self->{'sources_objects'} } ) {
+            say sprintf( "trying source '%s'", $source->name )
+              if $self->{verbose};
 
-        unless ( $imdb->episodes() ) {
-            my $error = "Error: could not get episodes for '$tags{show_title}'";
-            unless ( $self->without_imdb ) {
-                return $error;
-            }
-            else {
-                say $error . ", continuing";
-            }
+            # merge new epiosde into previous
+            $episode->merge( $source->get_tv_episode( \%tags ) );
+
+            # last if we have everything
+            last
+              if ( _episode_is_complete($episode) );
         }
-        my @episodes = @{ $imdb->episodes() };
-
-        my @genres = @{ $imdb->genres };
-        $tags{genre} = $genres[0];
-
-        $tags{cover_file} //= $self->{coverfile};
-        unless ( $tags{cover_file} ) {
-            $tags{cover_file} = $self->_get_cover_image( $imdb->cover );
-        }
-
-        ( $tags{episode_title}, $tags{episode_desc}, $tags{year} ) =
-          $self->_get_episode_data( \@episodes, $tags{season}, $tags{episode} );
-        unless ( $tags{episode_title} && $tags{episode_desc} ) {
-            my $error = "Error: could not get episodes for '$tags{show_title}'";
-            unless ( $self->without_imdb ) {
-                return $error;
-            }
-            else {
-                say $error . ", continuing";
-            }
-        }
-
     }
-    else {
-        my $error =
-          "Error: could not find '$tags{show_title}' on the IMDB (for $path)";
-        unless ( $self->without_imdb ) {
-            return $error;
+
+    # check what we have
+    unless ( $episode->overview ) {
+        if (   $self->{'continue_without_any'}
+            || $self->{'continue_without_overview'} )
+        {
+            say 'no overview found; continuing';
         }
         else {
-            say $error . ", continuing";
+            return sprintf( 'no overview found for %s, season %d, episode %d',
+                $tags{show_title}, $tags{season}, $tags{episode} );
         }
     }
 
     my $apTags = AtomicParsley::Command::Tags->new(
         artist       => $tags{show_title},
         albumArtist  => $tags{show_title},
-        title        => $tags{episode_title},
+        title        => $episode->title,
         album        => "$tags{show_title}, Season $tags{season}",
         tracknum     => $tags{episode},
         TVShowName   => $tags{show_title},
@@ -113,12 +115,13 @@ sub apply_meta {
         TVEpisodeNum => $tags{episode},
         TVSeasonNum  => $tags{season},
         stik         => $self->{'media_type'},
-        description  => $tags{episode_desc},
-        genre        => $tags{genre},
-        year         => $tags{year},
-        artwork      => $tags{cover_file}
+        description  => $episode->overview,
+        genre        => $episode->genre,
+        year         => $episode->year,
+        artwork      => $episode->cover
     );
 
+    say 'writing tags' if $self->{verbose};
     return $self->_write_tags( $path, $apTags );
 }
 
@@ -132,9 +135,9 @@ sub _parse_filename {
     # see if we have a regex that matches
     for my $r (@file_regexes) {
         if ( $file =~ $r ) {
-            my $show    = $self->{title} // $+{show};
-            my $season  = $+{season};
-            my $episode = $+{episode};
+            my $show    = $self->{title}   // $+{show};
+            my $season  = $self->{season}  // $+{season};
+            my $episode = $self->{episode} // $+{episode};
 
             if ( $show && $season && $episode ) {
 
@@ -147,20 +150,12 @@ sub _parse_filename {
     return;
 }
 
-# get the episode data from the array
-sub _get_episode_data {
-    my ( $self, $episodes, $season, $episode ) = @_;
-
-    for my $e ( @{$episodes} ) {
-        if ( $e->{season} == $season && $e->{episode} == $episode ) {
-            my $year;
-            if ( $e->{date} =~ /(\d{4})$/ ) {
-                $year = $1;
-            }
-            return ( $e->{title}, $e->{plot}, $year );
-        }
-    }
-    return;
+sub _episode_is_complete {
+    my $episode = shift;
+    return ( $episode->overview
+          && $episode->genre
+          && $episode->year
+          && $episode->cover );
 }
 
 1;

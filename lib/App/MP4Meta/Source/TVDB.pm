@@ -1,3 +1,4 @@
+use 5.010;
 use strict;
 use warnings;
 
@@ -5,33 +6,37 @@ package App::MP4Meta::Source::TVDB;
 
 # ABSTRACT: Searches http://thetvbd.com for TV data.
 
+use App::MP4Meta::Source::Base;
+our @ISA = 'App::MP4Meta::Source::Base';
+
 use App::MP4Meta::Source::Data::TVEpisode;
 
-use Net::TVDB;
+use WebService::TVDB;
 use File::Temp  ();
 use LWP::Simple ();
+
+use constant NAME => 'theTVDB.com';
 
 sub new {
     my $class = shift;
     my $args  = shift;
-    my $self  = {};
+    my $self  = $class->SUPER::new($args);
 
     # TODO: specify language
-    $self->{tvdb} = Net::TVDB->new();
+    # TODO: API key?
+    $self->{tvdb} = WebService::TVDB->new();
 
-    # cache results
-    $self->{cache} = {};
-
-    bless( $self, $class );
     return $self;
 }
 
-sub get_episode {
+sub name {
+    return NAME;
+}
+
+sub get_tv_episode {
     my ( $self, $args ) = @_;
 
-    die 'no title'   unless $args->{show_title};
-    die 'no season'  unless $args->{season};
-    die 'no episode' unless $args->{episode};
+    $self->SUPER::get_tv_episode($args);
 
     my $series_list = $self->{tvdb}->search( $args->{show_title} );
 
@@ -39,35 +44,28 @@ sub get_episode {
 
     # TODO: ability to search results i.e. by year
     my $series = @{$series_list}[0];
+    my $cover_file;
 
     if ( $self->{cache}->{ $series->id } ) {
         $series = $self->{cache}->{ $series->id };
     }
     else {
 
-        # fetches full series data
+        # fetches full series data and cache
         $series->fetch();
-
         $series = $self->{cache}->{ $series->id } = $series;
     }
 
-    # get banner
-    my $cover_file;
-    for my $banner ( @{ $series->banners } ) {
-        if ( $banner->BannerType eq 'season' ) {
-            if ( $banner->Season eq $args->{season} ) {
-                my $temp = File::Temp->new( SUFFIX => '.jpg' );
-                push @{ $self->{tempfiles} }, $temp;
-                if (
-                    LWP::Simple::is_success(
-                        LWP::Simple::getstore( $banner->url, $temp->filename )
-                    )
-                  )
-                {
-                    $cover_file = $temp->filename;
-                }
-            }
-        }
+    # get banner file and cache
+    if ( $self->{banner_cache}->{ $series->id . '-S' . $args->{season} } ) {
+        $cover_file =
+          $self->{banner_cache}->{ $series->id . '-S' . $args->{season} };
+    }
+    else {
+
+        $cover_file =
+          $self->{banner_cache}->{ $series->id . '-S' . $args->{season} } =
+          $self->_get_cover_file( $series, $args->{season} );
     }
 
     # get episode
@@ -80,6 +78,29 @@ sub get_episode {
         cover    => $cover_file,
         year     => $episode->year,
     );
+}
+
+# gets the cover file for the season and returns the filename
+# also stores in cache
+sub _get_cover_file {
+    my ( $self, $series, $season ) = @_;
+
+    for my $banner ( @{ $series->banners } ) {
+        if ( $banner->BannerType2 eq 'season' ) {
+            if ( $banner->Season eq $season ) {
+                my $temp = File::Temp->new( SUFFIX => '.jpg' );
+                push @{ $self->{tempfiles} }, $temp;
+                if (
+                    LWP::Simple::is_success(
+                        LWP::Simple::getstore( $banner->url, $temp->filename )
+                    )
+                  )
+                {
+                    return $temp->filename;
+                }
+            }
+        }
+    }
 }
 
 1;
