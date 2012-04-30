@@ -8,6 +8,8 @@ package App::MP4Meta::Command::musicvideo;
 
 use App::MP4Meta -command;
 
+use Try::Tiny;
+
 =head1 SYNOPSIS
 
   mp4meta musicvideo "Michael Jackson vs Prodigy - Bille Girl.m4v"
@@ -34,6 +36,7 @@ sub opt_spec {
         [ "coverfile=s", "The location of the cover image" ],
         [ "title=s",     "The title of the music video" ],
         [ "noreplace", "Don't replace the file - creates a temp file instead" ],
+        [ "verbose",   "Print verbosely" ],
     );
 }
 
@@ -66,13 +69,25 @@ sub execute {
             genre     => $opt->{genre},
             title     => $opt->{title},
             coverfile => $opt->{coverfile},
+            verbose   => $opt->{verbose},
         }
     );
 
     for my $file (@$args) {
-        my $error = $mv->apply_meta($file);
-        say $error if $error;
+        say "processing $file" if $opt->{verbose};
+        my $error;
+        try {
+            $error = $mv->apply_meta($file);
+        }
+        catch {
+            $error = "Error applying meta to $file: $_";
+        }
+        finally {
+            say $error if $error;
+        };
     }
+
+    say 'done' if $opt->{verbose};
 }
 
 1;
