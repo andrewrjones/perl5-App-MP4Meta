@@ -1,4 +1,8 @@
 {{$NEXT}}
+    Major rewrite
+    Use WebService::TVDB for TV data
+    Require IMDB::Film 0.52
+    Reorganise tests using Test::Class
 
 1.120500  2012-02-19 17:05:16 Europe/London
     Be a bit less restrictive when parsing TV file names.
