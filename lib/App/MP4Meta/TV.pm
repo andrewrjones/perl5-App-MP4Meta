@@ -151,6 +151,7 @@ sub _parse_filename {
     return;
 }
 
+# true if we have all we need in an episode
 sub _episode_is_complete {
     my $episode = shift;
     return ( $episode->overview

@@ -34,3 +34,17 @@ sub get_tv_episode {
 }
 
 1;
+
+=method new()
+
+Create a new object. Takes no arguments.
+  
+=method get_film( $args )
+
+Base functionality for getting a film.
+
+=method get_tv_episode( $args )
+
+Base functionality for getting a TV episode.
+
+=cut

@@ -105,6 +105,7 @@ sub _parse_filename {
     return ( $self->_clean_title($file), $year );
 }
 
+# true if we have everything we need in a film
 sub _film_is_complete {
     my $film = shift;
     return ( $film->overview && $film->genre && $film->year && $film->cover );

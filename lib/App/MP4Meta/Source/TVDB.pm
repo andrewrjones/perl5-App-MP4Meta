@@ -104,3 +104,11 @@ sub _get_cover_file {
 }
 
 1;
+
+=method new()
+
+Create a new object. Takes no arguments
+
+=method name()
+
+Returns the name of this source.

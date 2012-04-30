@@ -22,7 +22,7 @@ The C<film> command parses the filename and searches the IMDB for film metadata.
 
 =head2 tv
 
-The C<tv> command parses the filename and searches the IMDB for TV Series metadata. See L<App::MP4Meta::Command::tv> for more information.
+The C<tv> command parses the filename and searches the TVDB and the IMDB for TV Series metadata. See L<App::MP4Meta::Command::tv> for more information.
 
 =head2 musicvideo
 

@@ -28,7 +28,7 @@ __END__
 
 =head1 SYNOPSIS
 
-  my $episode = App::MP4Meta::Source::Data::TVEpisode->new(%data);
+  my $episode = App::MP4Meta::Source::Data::Base->new(%data);
 
 =attr cover
 
@@ -40,18 +40,18 @@ Genre.
 
 =attr overview
 
-Overview or description of TV episode.
+Overview or description.
 
 =attr title
 
-Episode title.
+Title.
 
 =attr year
 
-Year of episodes original broadcast.
+Year.
 
-=method merge ($tv_episode)
+=method merge ($to_merge)
 
-Merges $tv_episode in $self, without overwriting $self.
+Merges $to_merge in $self, without overwriting $self.
 
 =cut

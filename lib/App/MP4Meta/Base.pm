@@ -78,6 +78,7 @@ sub _clean_title {
     return $title;
 }
 
+# load a module as a new source
 sub _new_source {
     my ( $self, $source ) = @_;
     my $module = 'App::MP4Meta::Source::' . $source;
@@ -89,8 +90,7 @@ sub _new_source {
 
 =head1 SYNOPSIS
 
-  my $film = App::MP4Meta::Base->new( ap => 'path/to/ap' );
-  $film->apply_meta( '/path/to/The_Truman_Show.m4v' );
+  my $base = App::MP4Meta::Base->new( ap => 'path/to/ap' );
   
 =method new( %args )
 
@@ -99,3 +99,8 @@ Create new object. Takes the following arguments:
 =for :list
 * ap - Path to the AtomicParsley command. Optional.
 * noreplace - If true, do not replace file, but save to temp instead
+* verbose - If true, print verbosely
+* sources - A list of sources to load
+* genre - Define a genre for the media file
+* title - Define a title for the media file
+* coverfile - Define the path to a coverfile for the media file

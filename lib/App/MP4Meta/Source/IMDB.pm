@@ -137,3 +137,7 @@ sub _get_cover_file {
 }
 
 1;
+
+=method name()
+
+Returns the name of this source.
