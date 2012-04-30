@@ -1,3 +1,4 @@
+use 5.010;
 use strict;
 use warnings;
 
@@ -10,7 +11,7 @@ our @ISA = 'App::MP4Meta::Source::Base';
 
 use App::MP4Meta::Source::Data::TVEpisode;
 
-use IMDB::Film '0.50';
+use IMDB::Film 0.52;
 use File::Temp  ();
 use LWP::Simple ();
 
