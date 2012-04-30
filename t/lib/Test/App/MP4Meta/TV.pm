@@ -118,7 +118,7 @@ sub apply_meta_set_title : Test(9) {
 }
 
 # test $tv->_parse_filename($filename)
-sub parse_filename : Test(21) {
+sub parse_filename : Test(27) {
     my $self = shift;
     my $t    = $self->{tv};
 
@@ -153,6 +153,16 @@ sub parse_filename : Test(21) {
     is( $title,   'Dexter' );
     is( $season,  1 );
     is( $episode, 1 );
+    ( $title, $season, $episode ) =
+      $t->_parse_filename('Dexter - 2x12 - The British Invasion.m4v');
+    is( $title,   'Dexter' );
+    is( $season,  2 );
+    is( $episode, 12 );
+    ( $title, $season, $episode ) =
+      $t->_parse_filename('Dexter S02E12 - The British Invasion.m4v');
+    is( $title,   'Dexter' );
+    is( $season,  2 );
+    is( $episode, 12 );
     $t->{title} = 'Extras';
     ( $title, $season, $episode ) = $t->_parse_filename('Foo S01E01.m4v');
     is( $title,   'Extras' );
