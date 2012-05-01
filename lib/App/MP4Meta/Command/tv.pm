@@ -28,6 +28,12 @@ If it can not find the TV Series on any of the sources, by default it will not a
 
 By default, it will apply the metadata to the existing file. If you want it to write to a temporary file and leave the existing file untouched, provide the C<--noreplace> option.
 
+=head1 SOURCES
+
+By default, the module will first try to get data from http://thetvdb.com (using L<WebService::TVDB>) and if not found, try http://imdb.com (using L<IMDB::Film>).
+
+NOTE: To use the TVDB, you will need an API key, which should be stored in your C<.netrc> file. See L<WebService::TVDB> for more information.
+
 =cut
 
 sub usage_desc { "tv %o [file ...]" }
