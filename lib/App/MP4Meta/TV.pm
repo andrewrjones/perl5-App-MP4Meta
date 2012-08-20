@@ -105,13 +105,14 @@ sub apply_meta {
         }
     }
 
+    my $show_title = $tags{show_title} // $episode->show_title;
     my $apTags = AtomicParsley::Command::Tags->new(
-        artist       => $tags{show_title},
-        albumArtist  => $tags{show_title},
+        artist       => $show_title,
+        albumArtist  => $show_title,
         title        => $episode->title,
-        album        => "$tags{show_title}, Season $tags{season}",
+        album        => sprintf( "%s, Season %s", $show_title, $tags{season} ),
         tracknum     => $tags{episode},
-        TVShowName   => $tags{show_title},
+        TVShowName   => $show_title,
         TVEpisode    => $tags{episode},
         TVEpisodeNum => $tags{episode},
         TVSeasonNum  => $tags{season},

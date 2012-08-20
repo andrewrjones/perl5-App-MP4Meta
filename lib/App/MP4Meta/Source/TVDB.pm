@@ -72,11 +72,12 @@ sub get_tv_episode {
     my $episode = $series->get_episode( $args->{season}, $args->{episode} );
 
     return App::MP4Meta::Source::Data::TVEpisode->new(
-        overview => $episode->Overview,
-        title    => $episode->EpisodeName,
-        genre    => $series->Genre->[0],
-        cover    => $cover_file,
-        year     => $episode->year,
+        overview   => $episode->Overview,
+        title      => $episode->EpisodeName,
+        show_title => $series->SeriesName,
+        genre      => $series->Genre->[0],
+        cover      => $cover_file,
+        year       => $episode->year,
     );
 }
 

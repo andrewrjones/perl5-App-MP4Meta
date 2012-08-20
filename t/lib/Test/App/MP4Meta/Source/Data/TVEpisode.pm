@@ -17,16 +17,18 @@ sub _create_new : Test(2) {
     can_ok( $episode, 'merge' );
 }
 
-sub episode : Test(2) {
+sub episode : Test(3) {
     my $self = shift;
 
     my $e = App::MP4Meta::Source::Data::TVEpisode->new(
-        genre => 'Comedy',
-        year  => '2012',
+        genre      => 'Comedy',
+        year       => '2012',
+        show_title => 'The Office',
     );
 
-    is( $e->genre, 'Comedy' );
-    is( $e->year,  '2012' );
+    is( $e->genre,      'Comedy' );
+    is( $e->year,       '2012' );
+    is( $e->show_title, 'The Office' );
 }
 
 1;
