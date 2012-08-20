@@ -44,12 +44,12 @@ sub live_apply_meta_tvdb_default : Test(12) {
     is( $write_path, $path );
 
     isa_ok( $tags, 'AtomicParsley::Command::Tags' );
-    is( $tags->TVEpisode, 1,                      'episode num' );
-    is( $tags->artist,    'Heroes',               'artist' );
-    is( $tags->album,     'Heroes, Season 1',     'album' );
-    is( $tags->title,     'Genesis',              'title' );
-    is( $tags->genre,     'Action and Adventure', 'genre' );
-    is( $tags->year,      '2006',                 'year' );
+    is( $tags->TVEpisode, 1,                  'episode num' );
+    is( $tags->artist,    'Heroes',           'artist' );
+    is( $tags->album,     'Heroes, Season 1', 'album' );
+    is( $tags->title,     'Genesis',          'title' );
+    is( $tags->genre,     'Drama',            'genre' );
+    is( $tags->year,      '2006',             'year' );
     ok( $tags->description, 'description' );
     like( $tags->artwork, qr/\.jpg$/, 'artwork' );
 }
