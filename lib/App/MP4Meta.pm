@@ -26,4 +26,4 @@ The C<tv> command parses the filename and searches the TVDB and the IMDB for TV 
 
 =head2 musicvideo
 
-The C<film> command parses the filename in order to get the videos artist and song title. See L<App::MP4Meta::Command::musicvideo> for more information.
+The C<musicvideo> command parses the filename in order to get the videos artist and song title. See L<App::MP4Meta::Command::musicvideo> for more information.
