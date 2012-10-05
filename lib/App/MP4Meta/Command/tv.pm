@@ -94,7 +94,7 @@ sub execute {
             genre                => $opt->{genre},
             sources              => $opt->{sources},
             title                => $opt->{title},
-            coverfile            => $opt->{coverfile},
+            cover                => $opt->{coverfile},
             verbose              => $opt->{verbose},
             continue_without_any => $opt->{withoutany},
         }
