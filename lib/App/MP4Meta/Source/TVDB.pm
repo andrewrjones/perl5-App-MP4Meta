@@ -11,7 +11,7 @@ our @ISA = 'App::MP4Meta::Source::Base';
 
 use App::MP4Meta::Source::Data::TVEpisode;
 
-use WebService::TVDB;
+use WebService::TVDB 1.122800;
 use File::Temp  ();
 use LWP::Simple ();
 
