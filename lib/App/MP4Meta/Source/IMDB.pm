@@ -98,7 +98,7 @@ sub _search_imdb {
     my ( $self, $title, $year ) = @_;
 
     my $imdb = IMDB::Film->new( crit => $title, year => $year, cache => 1 );
-    die 'no series found' unless $imdb->status;
+    die 'no data found' unless $imdb->status;
 
     return $imdb;
 }
