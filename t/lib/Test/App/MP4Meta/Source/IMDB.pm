@@ -25,26 +25,6 @@ sub name : Test(1) {
     is( $i->name, 'IMDB' );
 }
 
-sub live_tv_episode : Test(6) {
-    my $self = shift;
-
-    return 'no live testing' unless $self->can_live_test();
-
-    my $i = $self->{imdb};
-
-    my $f = $i->get_tv_episode(
-        { show_title => 'Extras', season => 1, episode => 1 } );
-
-    isa_ok( $f, 'App::MP4Meta::Source::Data::TVEpisode' );
-    ok( $f->overview, 'got overview' );    # assume its sensible
-    is( $f->title, 'Ben Stiller', 'got title' );
-    is( $f->year,  2005,          'got year' );
-    is( $f->genre, 'Comedy',      'got comedy' );
-
-    local $TODO = 'can not currently get cover image for TV series from IMDB';
-    like( $f->cover, qr/\.jpg$/, 'got cover image' );
-}
-
 sub live_film : Test(6) {
     my $self = shift;
 

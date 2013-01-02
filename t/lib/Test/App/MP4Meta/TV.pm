@@ -54,40 +54,6 @@ sub live_apply_meta_tvdb_default : Test(12) {
     like( $tags->artwork, qr/\.jpg$/, 'artwork' );
 }
 
-sub live_apply_meta_imdb_default : Test(12) {
-    my $self = shift;
-
-    return 'no live testing' unless $self->can_live_test();
-
-    my $path = 'Heroes.S01E01';
-    my $t    = App::MP4Meta::TV->new( { sources => ['IMDB'] } );
-    my $mock = $self->mock_ap();
-    $t->{ap} = $mock;
-
-    my $result = $t->apply_meta($path);
-    ok( !$result );
-
-    # check we called AP correctly
-    my ( $name, $args ) = $mock->next_call();
-    my $write_path = $args->[1];
-    my $tags       = $args->[2];
-
-    is( $name,       'write_tags' );
-    is( $write_path, $path );
-
-    isa_ok( $tags, 'AtomicParsley::Command::Tags' );
-    is( $tags->TVEpisode, 1,                         'episode num' );
-    is( $tags->artist,    'Heroes',                  'artist' );
-    is( $tags->album,     'Heroes, Season 1',        'album' );
-    is( $tags->title,     'Chapter One \'Genesis\'', 'title' );
-    is( $tags->genre,     'Drama',                   'genre' );
-    is( $tags->year,      '2006',                    'year' );
-    ok( $tags->description, 'description' );
-
-    local $TODO = 'can not currently get cover image for TV series from IMDB';
-    like( $tags->artwork, qr/\.jpg$/, 'artwork' );
-}
-
 sub apply_meta_set_title : Test(9) {
     my $self = shift;
 

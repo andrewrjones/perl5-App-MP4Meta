@@ -10,8 +10,6 @@ use App::MP4Meta -command;
 
 use Try::Tiny;
 
-#use Term::ProgressBar::Simple;
-
 =head1 SYNOPSIS
 
   mp4meta tv THE_MIGHTY_BOOSH_S1E1.m4v THE_MIGHTY_BOOSH_S1E2.m4v
@@ -46,11 +44,7 @@ sub opt_spec {
     return (
         [ "genre=s",     "The genre of the TV Show" ],
         [ "coverfile=s", "The location of the cover image" ],
-        [
-            "sources=s@",
-            "The sources to search",
-            { default => [qw/TVDB IMDB/] }
-        ],
+        [ "sources=s@", "The sources to search", { default => [qw/TVDB/] } ],
         [ "title=s",   "The title of the TV Show" ],
         [ "series=s",  "The series number" ],
         [ "episode=s", "The episode number" ],

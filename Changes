@@ -1,4 +1,5 @@
 {{$NEXT}}
+    Use the IMDBAPI to get data from IMDB. Fixes getting film data, but unfortunately does not seem to return episode data.
 
 1.122800  2012-10-06 18:51:06 Europe/London
     POD fixes.
