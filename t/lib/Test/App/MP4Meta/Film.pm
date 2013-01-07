@@ -68,7 +68,7 @@ sub apply_meta_default : Test(9) {
 
     isa_ok( $tags, 'AtomicParsley::Command::Tags' );
     is( $tags->artwork,     '/foo/bar.jpg', 'artwork' );
-    is( $tags->title,       'In Brugges',   'title' );
+    is( $tags->title,       'Test Film',    'title' );
     is( $tags->description, 'nice',         'description' );
     is( $tags->genre,       'Comedy',       'genre' );
     is( $tags->year,        '2012',         'year' );
@@ -96,12 +96,12 @@ sub apply_meta_test_title : Test(10) {
     is( $write_path, $path );
 
     isa_ok( $tags, 'AtomicParsley::Command::Tags' );
-    is( $tags->artwork,     '/foo/bar.jpg',  'artwork' );
-    is( $tags->title,       'Setting Title', 'title' );
-    is( $tags->description, 'nice',          'description' );
-    is( $tags->genre,       'Comedy',        'genre' );
-    is( $tags->year,        '2012',          'year' );
-    is( $tags->stik,        'Movie',         'stik' );
+    is( $tags->artwork,     '/foo/bar.jpg', 'artwork' );
+    is( $tags->title,       'Test Film',    'title' );
+    is( $tags->description, 'nice',         'description' );
+    is( $tags->genre,       'Comedy',       'genre' );
+    is( $tags->year,        '2012',         'year' );
+    is( $tags->stik,        'Movie',        'stik' );
 }
 
 # test $film->_parse_filename($filename)
