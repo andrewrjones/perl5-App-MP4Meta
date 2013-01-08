@@ -10,7 +10,3 @@ INSTALL
 
     curl -L http://cpanmin.us | perl - --sudo App::cpanminus
     cpanm App::MP4Meta
-    
-TODO
-----
-Move from IMDB::Film to WebService::IMDB
