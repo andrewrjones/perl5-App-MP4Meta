@@ -85,7 +85,10 @@ sub apply_meta {
     );
 
     say 'writing tags' if $self->{verbose};
-    return $self->_write_tags( $path, $apTags );
+    my $error = $self->_write_tags( $path, $apTags );
+    return $error if $error;
+
+    return $self->_add_to_itunes( File::Spec->rel2abs($path) );
 }
 
 # Parse the filename in order to get the film title. Returns the title.

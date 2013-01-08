@@ -36,7 +36,8 @@ sub opt_spec {
         [ "coverfile=s", "The location of the cover image" ],
         [ "title=s",     "The title of the music video" ],
         [ "noreplace", "Don't replace the file - creates a temp file instead" ],
-        [ "verbose",   "Print verbosely" ],
+        [ "itunes",  "adds to iTunes after applying meta data. Mac OSX only." ],
+        [ "verbose", "Print verbosely" ],
     );
 }
 
@@ -69,6 +70,7 @@ sub execute {
             genre     => $opt->{genre},
             title     => $opt->{title},
             coverfile => $opt->{coverfile},
+            itunes    => $opt->{itunes},
             verbose   => $opt->{verbose},
         }
     );

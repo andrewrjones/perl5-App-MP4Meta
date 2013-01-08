@@ -21,6 +21,9 @@ sub new {
     # if true, replace file
     $self->{'noreplace'} = $args->{'noreplace'};
 
+    # if true, add to itunes
+    $self->{'itunes'} = $args->{'itunes'};
+
     # if true, print verbosely
     $self->{'verbose'} = $args->{'verbose'};
 
@@ -76,6 +79,35 @@ sub _clean_title {
     $title = join ' ', map( { ucfirst() } split /\s/, $title );
 
     return $title;
+}
+
+# adds file to itunes
+sub _add_to_itunes {
+    my ( $self, $path ) = @_;
+
+    return unless $self->{'itunes'};
+
+    unless ( $^O eq 'darwin' ) {
+        say STDERR 'can only add to iTunes on Mac OSX';
+        return 1;
+    }
+
+    $path =~ s!/!:!g;
+
+    my $cmd = sprintf(
+"osascript -e 'tell application \"iTunes\" to add file \"%s\" to playlist \"Library\" of source \"Library\"'",
+        $path );
+
+    my $result = `$cmd`;
+    if ($?) {
+        say STDERR "error adding to iTunes: $result";
+        return 1;
+    }
+    if ( $self->{'verbose'} and $result ) {
+        say $result;
+    }
+
+    return;
 }
 
 # load a module as a new source

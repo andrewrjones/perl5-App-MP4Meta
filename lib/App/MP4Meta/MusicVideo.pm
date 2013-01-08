@@ -43,7 +43,10 @@ sub apply_meta {
         artwork     => $self->{'coverfile'}
     );
 
-    return $self->_write_tags( $path, $tags );
+    my $error = $self->_write_tags( $path, $tags );
+    return $error if $error;
+
+    return $self->_add_to_itunes( File::Spec->rel2abs($path) );
 }
 
 # Parse the filename and returns the videos artist and title.

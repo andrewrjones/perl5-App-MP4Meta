@@ -32,12 +32,13 @@ sub abstract {
 
 sub opt_spec {
     return (
-        [ "genre=s",     "The genre of the TV Show" ],
+        [ "genre=s",     "The genre of the Film" ],
         [ "coverfile=s", "The location of the cover image" ],
         [ "sources=s@", "The sources to search", { default => [qw/IMDB/] } ],
         [ "title=s",    "The title of the Film" ],
         [ "noreplace", "Don't replace the file - creates a temp file instead" ],
-        [ "verbose",   "Print verbosely" ],
+        [ "itunes",  "adds to iTunes after applying meta data. Mac OSX only." ],
+        [ "verbose", "Print verbosely" ],
         [
             "withoutany",
 "Continue to process even if we can not find any information on the internet"
@@ -75,6 +76,7 @@ sub execute {
             sources              => $opt->{sources},
             title                => $opt->{title},
             coverfile            => $opt->{coverfile},
+            itunes               => $opt->{itunes},
             verbose              => $opt->{verbose},
             continue_without_any => $opt->{withoutany},
         }
