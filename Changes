@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+1.130100  2013-01-10 18:50:09 Europe/London
     Auto add to iTunes after applying meta. Mac OSX only.
     Use the title we get from IMDB, not what we found in the filename.
 
