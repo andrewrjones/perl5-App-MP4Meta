@@ -84,7 +84,7 @@ sub apply_meta_set_title : Test(9) {
 }
 
 # test $tv->_parse_filename($filename)
-sub parse_filename : Test(27) {
+sub parse_filename : Test(39) {
     my $self = shift;
     my $t    = $self->{tv};
 
@@ -97,6 +97,22 @@ sub parse_filename : Test(27) {
     is( $title,   'Heroes' );
     is( $season,  3 );
     is( $episode, 1 );
+    ( $title, $season, $episode ) = $t->_parse_filename('Miranda S01 E02.m4a');
+    is( $title,   'Miranda' );
+    is( $season,  1 );
+    is( $episode, 2 );
+    ( $title, $season, $episode ) = $t->_parse_filename('Miranda S01 E02.m4b');
+    is( $title,   'Miranda' );
+    is( $season,  1 );
+    is( $episode, 2 );
+    ( $title, $season, $episode ) = $t->_parse_filename('Miranda S01 E02.m4p');
+    is( $title,   'Miranda' );
+    is( $season,  1 );
+    is( $episode, 2 );
+    ( $title, $season, $episode ) = $t->_parse_filename('Miranda S01 E02.mp4');
+    is( $title,   'Miranda' );
+    is( $season,  1 );
+    is( $episode, 2 );
     ( $title, $season, $episode ) = $t->_parse_filename('Miranda S01 E02.m4v');
     is( $title,   'Miranda' );
     is( $season,  1 );

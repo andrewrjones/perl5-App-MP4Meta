@@ -136,7 +136,7 @@ sub _parse_filename {
     my ( $self, $file ) = @_;
 
     # strip suffix
-    $file =~ s/\.m4v$//;
+    $file = $self->_strip_suffix($file);
 
     # see if we have a regex that matches
     for my $r (@file_regexes) {

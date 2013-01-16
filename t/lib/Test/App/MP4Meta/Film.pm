@@ -105,13 +105,25 @@ sub apply_meta_test_title : Test(10) {
 }
 
 # test $film->_parse_filename($filename)
-sub parse_filename : Test(14) {
+sub parse_filename : Test(22) {
     my $self = shift;
     my $f    = $self->{film};
 
     my $title;
     my $year;
 
+    ( $title, $year ) = $f->_parse_filename('THE_TRUMAN_SHOW.m4a');
+    is( $title, 'The Truman Show' );
+    ok( !$year );
+    ( $title, $year ) = $f->_parse_filename('THE_TRUMAN_SHOW.m4b');
+    is( $title, 'The Truman Show' );
+    ok( !$year );
+    ( $title, $year ) = $f->_parse_filename('THE_TRUMAN_SHOW.m4p');
+    is( $title, 'The Truman Show' );
+    ok( !$year );
+    ( $title, $year ) = $f->_parse_filename('THE_TRUMAN_SHOW.mp4');
+    is( $title, 'The Truman Show' );
+    ok( !$year );
     ( $title, $year ) = $f->_parse_filename('THE_TRUMAN_SHOW.m4v');
     is( $title, 'The Truman Show' );
     ok( !$year );

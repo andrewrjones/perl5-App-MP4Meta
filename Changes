@@ -1,4 +1,5 @@
 {{$NEXT}}
+    Parse filenames for all the suffixes that AP supports.
 
 1.130100  2013-01-10 18:50:09 Europe/London
     Auto add to iTunes after applying meta. Mac OSX only.
