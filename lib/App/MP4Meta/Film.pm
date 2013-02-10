@@ -78,6 +78,7 @@ sub apply_meta {
     my $apTags = AtomicParsley::Command::Tags->new(
         title       => $film->title,
         description => $film->overview,
+        longdesc    => $film->overview,
         genre       => $film->genre,
         year        => $film->year,
         artwork     => $film->cover,

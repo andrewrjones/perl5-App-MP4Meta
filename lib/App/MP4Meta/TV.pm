@@ -119,6 +119,7 @@ sub apply_meta {
         TVSeasonNum  => $tags{season},
         stik         => $self->{'media_type'},
         description  => $episode->overview,
+        longdesc     => $episode->overview,
         genre        => $episode->genre,
         year         => $episode->year,
         artwork      => $episode->cover

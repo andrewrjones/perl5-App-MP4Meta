@@ -1,4 +1,5 @@
 {{$NEXT}}
+    Set the long description attribute for iTunes.
 
 1.130160  2013-01-16 14:03:23 Europe/London
     Parse filenames for all the suffixes that AP supports.
