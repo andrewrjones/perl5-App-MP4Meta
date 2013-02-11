@@ -20,7 +20,9 @@ sub new {
 
     my $self = $class->SUPER::new($args);
 
-    $self->{'media_type'} = 'Movie';
+    # Of course, its a movie, but this fixes the
+    # 'Home Video' problem in iTunes 11.
+    $self->{'media_type'} = 'Short Film';
 
     return $self;
 }

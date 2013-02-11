@@ -101,7 +101,7 @@ sub apply_meta_test_title : Test(10) {
     is( $tags->description, 'nice',         'description' );
     is( $tags->genre,       'Comedy',       'genre' );
     is( $tags->year,        '2012',         'year' );
-    is( $tags->stik,        'Movie',        'stik' );
+    is( $tags->stik,        'Short Film',   'stik' );
 }
 
 # test $film->_parse_filename($filename)

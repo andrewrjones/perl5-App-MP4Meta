@@ -1,4 +1,5 @@
 {{$NEXT}}
+    Fix movies being imported as 'Home Video's in iTunes 11.
 
 1.130410  2013-02-10 20:25:52 Europe/London
     Set the long description attribute for iTunes.
