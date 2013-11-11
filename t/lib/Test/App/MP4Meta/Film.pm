@@ -41,7 +41,7 @@ sub live_apply_meta_imdb_default : Test(9) {
     like( $tags->artwork, qr/\.jpg$/, 'artwork' );
     is( $tags->title, 'The Truman Show', 'title' );
     ok( $tags->description, 'description' );    # assume its sensible
-    is( $tags->genre, 'Comedy', 'genre' );
+    like( $tags->genre, qr/Comedy|Drama/, 'genre' );
     is( $tags->year,  '1998',   'year' );
 }
 
