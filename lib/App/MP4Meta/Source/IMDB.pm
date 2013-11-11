@@ -49,8 +49,18 @@ sub get_film {
     # FIXME: never set
     my $cover_file;
     unless ($cover_file) {
-        $cover_file = $self->_get_cover_file( $result->poster );
+
+        my $poster;
+        if ( UNIVERSAL::isa( $result->poster, "HASH" ) ) {
+            $poster = $result->poster->{cover} || $result->poster->{imdb};
+        }
+        else {
+            $poster = $result->poster;
+        }
+        $cover_file = $self->_get_cover_file($poster);
     }
+
+    # FIXME: poster could be null.
 
     return App::MP4Meta::Source::Data::Film->new(
         overview => $result->plot_simple,
