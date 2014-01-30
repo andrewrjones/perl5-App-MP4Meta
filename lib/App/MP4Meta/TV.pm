@@ -144,19 +144,13 @@ sub _parse_filename {
     my ( $self, $directories, $file ) = @_;
 
     my $show = '';
-	my $season = '';
-	my $episode = '';
-    if ( $directories =~ s{/season\s+(\d+)$/?}{}i)
-	{
-		my @parts = (split /\//, $directories);
-		$show = $parts[$#parts];
-	}
+    my $season = '';
+    my $episode = '';
+
     # strip suffix
     $file = $self->_strip_suffix($file);
 
-
     # see if we have a regex that matches
-	# need to parse directories, ignore "Season N/ type directories"
     for my $r (@file_regexes) {
         if ( $file =~ $r ) {
             $show       = $self->{title}   // $+{show};
@@ -170,17 +164,16 @@ sub _parse_filename {
             }
         }
     }
-	if ( $season && $episode)
-	{
-		my @parts = (split /\//, $directories);
-		$show = $parts[$#parts];
-        if ( $show && $season && $episode ) {
 
-            return ( $self->_clean_title($show), int $season, int $episode );
-        }
-	}
-
-
+    if ( $directories =~ s{/season\s+(\d+)$/?}{}i)
+    {
+        my @parts = (split /\//, $directories);
+        $show = $parts[$#parts];
+    }
+    
+    if ( $show && $season && $episode ) {
+        return ( $self->_clean_title($show), int $season, int $episode );
+    }
     return;
 }
 
