@@ -67,7 +67,7 @@ sub apply_meta {
 
         # parse the filename for the title, season and episode
         ( $tags{show_title}, $tags{season}, $tags{episode} ) =
-          $self->_parse_filename($file);
+          $self->_parse_filename($directories, $file);
         unless ( $tags{show_title} && $tags{season} && $tags{episode} ) {
             return "Error: could not parse the filename for $path";
         }
@@ -134,17 +134,27 @@ sub apply_meta {
 
 # Parse the filename in order to get the series title the and season and episode number.
 sub _parse_filename {
-    my ( $self, $file ) = @_;
+    my ( $self, $directories, $file ) = @_;
 
+    my $show = '';
+	my $season = '';
+	my $episode = '';
+    if ( $directories =~ s{/season\s+(\d+)$/?}{}i)
+	{
+		my @parts = (split /\//, $directories);
+		$show = $parts[$#parts];
+	}
     # strip suffix
     $file = $self->_strip_suffix($file);
 
+
     # see if we have a regex that matches
+	# need to parse directories, ignore "Season N/ type directories"
     for my $r (@file_regexes) {
         if ( $file =~ $r ) {
-            my $show    = $self->{title}   // $+{show};
-            my $season  = $self->{season}  // $+{season};
-            my $episode = $self->{episode} // $+{episode};
+            $show       = $self->{title}   // $+{show};
+            $season  = $self->{season}  // $+{season};
+            $episode = $self->{episode} // $+{episode};
 
             if ( $show && $season && $episode ) {
 
@@ -153,6 +163,16 @@ sub _parse_filename {
             }
         }
     }
+	if ( $season && $episode)
+	{
+		my @parts = (split /\//, $directories);
+		$show = $parts[$#parts];
+        if ( $show && $season && $episode ) {
+
+            return ( $self->_clean_title($show), int $season, int $episode );
+        }
+	}
+
 
     return;
 }
