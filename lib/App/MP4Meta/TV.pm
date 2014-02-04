@@ -165,11 +165,6 @@ sub _parse_filename {
         }
     }
 
-    if ( $directories  )
-    {
-        say $directories;
-    }
-
     if ( $directories )
     {
         #-- remove Season N
