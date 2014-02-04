@@ -17,7 +17,7 @@ use App::MP4Meta::Source::Data::TVEpisode;
 # a list of regexes to try to parse the file
 my @file_regexes = (
     qr/^S(?<season>\d)-E(?<episode>\d)\s+-\s+(?<show>.*)$/,
-    qr/^S(?<season>\d)-E(?<episode>\d)\s*-\s*E(?<end_episode\d)\s+-\s+(?<show>.*)$/,
+    qr/^S(?<season>\d)-E(?<episode>\d)\s*-\s*E(?<end_episode>\d)\s+-\s+(?<show>.*)$/,
     qr/^(?<show>.*)\s+S(?<season>\d\d)(\s|)E(?<episode>\d\d)$/,
     qr/^(?<show>.*)\s+S(?<season>\d\d)(\s|)E(?<episode>\d\d)\s*-\s*E(?<end_episode>\d\d)$/,
     qr/^(?<show>.*)\.S(?<season>\d\d)E(?<episode>\d\d)/i,
@@ -74,7 +74,7 @@ sub apply_meta {
 
         # parse the filename for the title, season and episode
         ( $tags{show_title}, $tags{season}, $tags{episode} ) =
-          $self->_parse_filename($directories, $file);
+          $self->_parse_filename($file, $directories);
         unless ( $tags{show_title} && $tags{season} && $tags{episode} ) {
             return "Error: could not parse the filename for $path";
         }
@@ -141,7 +141,7 @@ sub apply_meta {
 
 # Parse the filename in order to get the series title the and season and episode number.
 sub _parse_filename {
-    my ( $self, $directories, $file ) = @_;
+    my ( $self, $file, $directories ) = @_;
 
     my $show = '';
     my $season = '';
@@ -165,8 +165,15 @@ sub _parse_filename {
         }
     }
 
-    if ( $directories =~ s{/season\s+(\d+)$/?}{}i)
+    if ( $directories  )
     {
+        say $directories;
+    }
+
+    if ( $directories )
+    {
+        #-- remove Season N
+        $directories =~ s{/season\s+(\d+)$/?}{}i;
         my @parts = (split /\//, $directories);
         $show = $parts[$#parts];
     }
