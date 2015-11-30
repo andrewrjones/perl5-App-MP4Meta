@@ -84,7 +84,7 @@ sub apply_meta_set_title : Test(9) {
 }
 
 # test $tv->_parse_filename($filename)
-sub parse_filename : Test(39) {
+sub parse_filename : Test(45) {
     my $self = shift;
     my $t    = $self->{tv};
 
@@ -150,6 +150,18 @@ sub parse_filename : Test(39) {
     is( $title,   'Extras' );
     is( $season,  1 );
     is( $episode, 1 );
+    
+    #-- Plex style rules
+    $t->{title} = '';
+    ( $title, $season, $episode ) = $t->_parse_filename('S06E01-E02 - Bargaining.mkv', '/Volumes/Media3/TV Shows/Buffy the Vampire Slayer/Season 6/');
+    is ( $title, 'Buffy The Vampire Slayer');
+    is ( $season, 6);
+    is ( $episode, 1);
+
+    ( $title, $season, $episode ) = $t->_parse_filename('S06E01-E02 - Bargaining.mkv', '/Volumes/Media3/TV Shows/Buffy the Vampire Slayer/');
+    is ( $title, 'Buffy The Vampire Slayer');
+    is ( $season, 6);
+    is ( $episode, 1);
 }
 
 sub episode_is_complete : Test(2) {
