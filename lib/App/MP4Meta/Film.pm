@@ -48,7 +48,7 @@ sub apply_meta {
 
     my $film = App::MP4Meta::Source::Data::Film->new(
         genre => $self->{'genre'},
-        cover => $self->{'cover'},
+        cover => $self->{'coverfile'},
         year  => $self->{'year'},
     );
     unless ( _film_is_complete($film) ) {

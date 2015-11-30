@@ -46,7 +46,6 @@ sub get_film {
     );
 
     # get cover file
-    # FIXME: never set
     my $cover_file;
     unless ($cover_file) {
 
