@@ -16,35 +16,6 @@ sub _create_new : Test(1) {
     $self->{film} = new_ok('App::MP4Meta::Film');
 }
 
-sub live_apply_meta_imdb_default : Test(9) {
-    my $self = shift;
-
-    return 'no live testing' unless $self->can_live_test();
-
-    my $path = 'THE_TRUMAN_SHOW.m4v';
-    my $t    = App::MP4Meta::Film->new( { sources => ['IMDB'] } );
-    my $mock = $self->mock_ap();
-    $t->{ap} = $mock;
-
-    my $result = $t->apply_meta($path);
-    ok( !$result );
-
-    # check we called AP correctly
-    my ( $name, $args ) = $mock->next_call();
-    my $write_path = $args->[1];
-    my $tags       = $args->[2];
-
-    is( $name,       'write_tags' );
-    is( $write_path, $path );
-
-    isa_ok( $tags, 'AtomicParsley::Command::Tags' );
-    like( $tags->artwork, qr/\.jpg$/, 'artwork' );
-    is( $tags->title, 'The Truman Show', 'title' );
-    ok( $tags->description, 'description' );    # assume its sensible
-    like( $tags->genre, qr/Comedy|Drama/, 'genre' );
-    is( $tags->year,  '1998',   'year' );
-}
-
 sub apply_meta_default : Test(9) {
     my $self = shift;
 

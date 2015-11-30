@@ -14,7 +14,6 @@ use Test::App::MP4Meta::MusicVideo;
 use Test::App::MP4Meta::TV;
 
 use Test::App::MP4Meta::Source::Base;
-use Test::App::MP4Meta::Source::IMDB;
 use Test::App::MP4Meta::Source::TVDB;
 use Test::App::MP4Meta::Source::Data::Base;
 use Test::App::MP4Meta::Source::Data::Film;
