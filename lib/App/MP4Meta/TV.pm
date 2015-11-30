@@ -17,12 +17,19 @@ use App::MP4Meta::Source::Data::TVEpisode;
 # a list of regexes to try to parse the file
 my @file_regexes = (
     qr/^S(?<season>\d)-E(?<episode>\d)\s+-\s+(?<show>.*)$/,
+    qr/^S(?<season>\d)-E(?<episode>\d)\s*-\s*E(?<end_episode>\d)\s+-\s+(?<show>.*)$/,
     qr/^(?<show>.*)\s+S(?<season>\d\d)(\s|)E(?<episode>\d\d)$/,
+    qr/^(?<show>.*)\s+S(?<season>\d\d)(\s|)E(?<episode>\d\d)\s*-\s*E(?<end_episode>\d\d)$/,
     qr/^(?<show>.*)\.S(?<season>\d\d)E(?<episode>\d\d)/i,
+    qr/^(?<show>.*)\.S(?<season>\d\d)E(?<episode>\d\d)\s*-\s*E(?<end_episode>\d\d)/i,
     qr/^(?<show>.*)\s*-?\s*S(?<season>\d\d?)E(?<episode>\d\d?)/i,
+    qr/^(?<show>.*)\s*-?\s*S(?<season>\d\d?)E(?<episode>\d\d?)\s*-\s*E(?<end_episode>\d\d)/i,
     qr/^(?<show>.*)-S(?<season>\d\d?)E(?<episode>\d\d?)/,
-    qr/^(?<show>.*)_S(?<season>\d\d?)E(?<episode>\d\d?)/,
-    qr/S(?<season>\d\d?)E(?<episode>\d\d?)/,
+    qr/^(?<show>.*)-S(?<season>\d\d?)E(?<episode>\d\d?)\s*-\s*E(?<end_episode>\d\d)/,
+    qr/^(?<show>.*)-S(?<season>\d\d?)E(?<episode>\d\d?)/i,
+    qr/^(?<show>.*)-S(?<season>\d\d?)E(?<episode>\d\d?)\s*-\s*E(?<end_episode>\d\d)/i,
+    qr/S(?<season>\d\d?)E(?<episode>\d\d?)/i,
+    qr/S(?<season>\d\d?)E(?<episode>\d\d?)\s*-\s*E(?<end_episode>\d\d?)/i,
     qr/^(?<show>.*)\s*-?\s*(?<season>\d\d?)x(?<episode>\d\d?)/,
 );
 
@@ -67,7 +74,7 @@ sub apply_meta {
 
         # parse the filename for the title, season and episode
         ( $tags{show_title}, $tags{season}, $tags{episode} ) =
-          $self->_parse_filename($file);
+          $self->_parse_filename($file, $directories);
         unless ( $tags{show_title} && $tags{season} && $tags{episode} ) {
             return "Error: could not parse the filename for $path";
         }
@@ -134,7 +141,11 @@ sub apply_meta {
 
 # Parse the filename in order to get the series title the and season and episode number.
 sub _parse_filename {
-    my ( $self, $file ) = @_;
+    my ( $self, $file, $directories ) = @_;
+
+    my $show = '';
+    my $season = '';
+    my $episode = '';
 
     # strip suffix
     $file = $self->_strip_suffix($file);
@@ -142,9 +153,9 @@ sub _parse_filename {
     # see if we have a regex that matches
     for my $r (@file_regexes) {
         if ( $file =~ $r ) {
-            my $show    = $self->{title}   // $+{show};
-            my $season  = $self->{season}  // $+{season};
-            my $episode = $self->{episode} // $+{episode};
+            $show       = $self->{title}   // $+{show};
+            $season  = $self->{season}  // $+{season};
+            $episode = $self->{episode} // $+{episode};
 
             if ( $show && $season && $episode ) {
 
@@ -154,6 +165,17 @@ sub _parse_filename {
         }
     }
 
+    if ( $directories )
+    {
+        #-- remove Season N
+        $directories =~ s{/season\s+(\d+)$/?}{}i;
+        my @parts = (split /\//, $directories);
+        $show = $parts[$#parts];
+    }
+    
+    if ( $show && $season && $episode ) {
+        return ( $self->_clean_title($show), int $season, int $episode );
+    }
     return;
 }
 
