@@ -58,11 +58,11 @@ sub live : Test(6) {
         { show_title => 'Men Behaving Badly', season => 2, episode => 1 } );
 
     isa_ok( $e, 'App::MP4Meta::Source::Data::TVEpisode' );
-    ok( $e->overview, 'got overview' );    # assume its sensible
-    is( $e->title, 'Gary and Tony', 'got title' );
-    is( $e->year,  1992,            'got year' );
-    is( $e->genre, 'Comedy',        'got comedy' );
-    like( $e->cover, qr/\.jpg$/, 'got cover image' );
+    ok(   $e->overview,                     'got overview' );    # assume its sensible
+    like( $e->title, qr/Gary (and|&) Tony/, 'got title' );
+    is(   $e->year,  1992,                  'got year' );
+    is(   $e->genre, 'Comedy',              'got comedy' );
+    like( $e->cover, qr/\.jpg$/,            'got cover image' );
 }
 
 1;
