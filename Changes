@@ -1,5 +1,6 @@
 {{$NEXT}}
     Replace broken IMDB with OMDB.
+    Add Plex parsing rules for TV Shows. Thanks to Jim Graham https://github.com/jimgraham.
 
 1.130420  2013-02-11 19:23:43 Europe/London
     Fix movies being imported as 'Home Video's in iTunes 11.
