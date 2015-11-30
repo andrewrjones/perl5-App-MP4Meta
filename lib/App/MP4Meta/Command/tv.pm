@@ -28,7 +28,7 @@ By default, it will apply the metadata to the existing file. If you want it to w
 
 =head1 SOURCES
 
-By default, the module will first try to get data from the TVDB (using L<WebService::TVDB>) and if not found, try the IMDB (using L<IMDB::Film>).
+By default, the module will first try to get data from the TVDB (using L<WebService::TVDB>).
 
 NOTE: To use the TVDB, you will need an API key, which should be stored in your C<.netrc> file. See L<WebService::TVDB> for more information.
 

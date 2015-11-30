@@ -18,11 +18,11 @@ The C<mp4meta> command applies iTunes-like metadata to an mp4 file. The metadata
 
 =head2 film
 
-The C<film> command parses the filename and searches the IMDB for film metadata. See L<App::MP4Meta::Command::film> for more information.
+The C<film> command parses the filename and searches the OMDB for film metadata. See L<App::MP4Meta::Command::film> for more information.
 
 =head2 tv
 
-The C<tv> command parses the filename and searches the TVDB and the IMDB for TV Series metadata. See L<App::MP4Meta::Command::tv> for more information.
+The C<tv> command parses the filename and searches the TVDB for TV Series metadata. See L<App::MP4Meta::Command::tv> for more information.
 
 =head2 musicvideo
 

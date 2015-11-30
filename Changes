@@ -1,5 +1,5 @@
 {{$NEXT}}
-    Fix querying from IMDB.
+    Replace broken IMDB with OMDB.
 
 1.130420  2013-02-11 19:23:43 Europe/London
     Fix movies being imported as 'Home Video's in iTunes 11.

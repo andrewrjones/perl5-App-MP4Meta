@@ -18,7 +18,7 @@ use Try::Tiny;
 
 This command applies metadata to one or more films. It parses the filename in order to get the films title and (optionally) year.
 
-It gets the films metadata by querying the IMDB. It then uses AtomicParsley to apply the metadata to the file.
+It gets the films metadata by querying the OMDB. It then uses AtomicParsley to apply the metadata to the file.
 
 By default, it will apply the metadata to the existing file. If you want it to write to a temporary file and leave the existing file untouched, provide the C<--noreplace> option.
 
@@ -34,7 +34,7 @@ sub opt_spec {
     return (
         [ "genre=s",     "The genre of the Film" ],
         [ "coverfile=s", "The location of the cover image" ],
-        [ "sources=s@", "The sources to search", { default => [qw/IMDB/] } ],
+        [ "sources=s@", "The sources to search", { default => [qw/OMDB/] } ],
         [ "title=s",    "The title of the Film" ],
         [ "noreplace", "Don't replace the file - creates a temp file instead" ],
         [ "itunes",  "adds to iTunes after applying meta data. Mac OSX only." ],
