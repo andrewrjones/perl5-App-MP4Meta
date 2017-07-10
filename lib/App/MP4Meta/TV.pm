@@ -51,7 +51,7 @@ sub new {
     $self->{'episode'}  = $args->{'episode'};
     $self->{'overview'} = $args->{'overview'};
     $self->{'year'}     = $args->{'year'};
-    $self->{'cover'}    = $args->{'coverfile'};
+    $self->{'cover'}    = $args->{'cover'};
 
     # we are a TV Show
     $self->{'media_type'} = 'TV Show';
